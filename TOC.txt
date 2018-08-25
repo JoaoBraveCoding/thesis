@@ -1,0 +1,55 @@
+Table of content
+
+	Introduction:
+
+	Goals: 
+
+	Bitcoin and Blockchain:
+		Transactions:
+
+		Blocks:
+
+		Blochain:
+
+		Network:
+
+		Summary:
+
+		Bitcoin: A Peer-to-Peer Electronic Cash System - This paper introduced Bitcoin to the world it talks about some specifications but doesn’t go in-depth.
+		Information Propagation in Bitcoin Network - This paper talks about some of the aspects of Bitcoin Network protocol a little more in-depth.
+		Discovering Bitcoin’s Public Topology and Influential Nodes - There is a section in this paper that explains how nodes connect to new nodes.
+		Eclipse Attacks on Bitcoin’s Peer-to-Peer Network - This explains well how the membership of Bitcoin works
+	
+	Bitcoin and Blockchain vulnerabilities:	
+		Relay related vulnerabilities:
+		
+			Information Propagation in Bitcoin Network - This paper talks about information eclipsing it’s not a proper attack but it’s a defect.
+			Secure Peer Sampling Service: the Mosquito Attack - This paper talks about a attack performed in peer sampling networks.
+			Proximity Awareness Approach to Enhance Propagation Delay on the Bitcoin Peer-to-Peer Network
+
+		Membership related vulnerabilities:
+
+			Hijacking Bitcoin: Routing Attacks on Cryptocurrencies - This papers talks about two different attacks (Partitioning attack and Delay attack).
+			Dandelion: Redesigning the Bitcoin Network for Anonymity
+			Incentives Build Robustness in BitTorrent
+			Do Incentives Build robustness in BitTorrent?
+
+		Summary:
+
+	Architecture:
+		Neighbours ordering:
+			Explicar como foi implementado a solução da serialização dos vizinhos
+
+		Membership solution:
+			Explicar como foi implementada a solução da membership
+
+	Evaluation:
+		Explicar como foi implementado o simulador
+		Mostrar os resultados obtidos
+
+	Discusison:
+		Discutir os resultados obtidos
+
+	Conclusions: 
+	 	Concluir a tese
+

@@ -1,0 +1,66 @@
+%% New template changes
+
+\documentclass[a4paper,10pt,oneside,onecolumn,final,openright]{report}
+\usepackage{helvet} %Arial-like font
+\renewcommand{\familydefault}{\sfdefault} %Apply helvet font
+\usepackage[margin=2.5cm]{geometry} %Apply 2.5cm margin in all sides
+
+\usepackage[doublespace,indent]{thesisdavid} %Change chapter style or font / line spacing in thesisdavid.sty
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\usepackage[utf8]{inputenc}
+\usepackage[english]{babel}
+\usepackage{url}
+
+\usepackage{array,booktabs,arydshln}
+\usepackage{hyphenat}
+\usepackage{graphicx}
+\usepackage{flushend}
+\usepackage{caption}
+\usepackage{subfig}
+\usepackage{algpseudocode}
+\usepackage{algorithm}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{afterpage}
+\usepackage[explicit]{titlesec}
+\usepackage[acronym]{glossaries}
+
+
+
+\makeglossaries
+
+\newcolumntype{M}[1]{>{\centering\arraybackslash}m{#1}}
+
+\newcommand{\red}[1]{\textcolor{red}{#1}}
+\newcommand{\todo}[1]{\textcolor{red}{\{TODO:} #1\textcolor{red}\}}
+
+\definecolor{light}{gray}{.85}
+
+\begin{document}
+%\nocite{*}  %Show bibliography without explicit citations
+
+% Initial pages.
+\input{cover}
+
+\pagestyle{plain}
+
+\input{chapters/agradecimentos.tex}
+\input{acronyms}
+\input{chapters/abstract}
+\tableofcontents
+\null\newpage
+\null\newpage
+\input{chapters/1-introduction}
+\input{chapters/2-relatedwork}
+\input{chapters/3-work}
+\input{chapters/4-evaluation}
+\input{chapters/5-conclusions}
+
+
+\bibliographystyle{chicago}
+\bibliography{references}
+\addcontentsline{toc}{chapter}{{\small Bibliography}}
+
+
+\end{document}

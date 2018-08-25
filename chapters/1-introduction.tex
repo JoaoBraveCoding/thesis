@@ -1,0 +1,83 @@
+\chapter{Introduction}
+\section{Motivation}
+
+\section{Contributions}
+
+\section{Results}
+
+\section{Structure of the Document}
+Cryptocurrencies and their associated mechanisms have gained an increasing relevance in recent years. For instance, at the time of this writing, Bitcoin (the most widely used cryptocurrency) has reached a trading value of more than 16K USD and the Bitcoin network processed more than 300K transactions per day\footnote{Taken from \url{https://blockchain.info/charts}.}. Moreover, the main technology behind Bitcoin, the Blochain, has emerged as useful for a myriad of other applications, from birth, wedding, and death certificates to the monetization of music\footnote{Taken from \url{https://blockgeeks.com/guides/blockchain-applications/}}.
+
+%Like any other technology that has significant financial value, cryptocurrencies and blockchain networks have been subject to a number of attacks that attempt to exploit existing vulnerabilities in current protocols to obtain illicit profit. 
+%For instance in Bitcoin,  in an attack known as the partition attack, an Autonomous System (AS) can isolate a partition of the network to make it vulnerable to double spending (see~\cite{apostolaki2016hijacking}).
+%Attacks such as this are increasingly more appealing due to the potential significant financial advantage that an attacker can gain, if successfull.
+%
+%This kind of attack has the potential to result in a significant financial advantage to the attacker and hence it 
+%
+%In this work, we are particularly interested in studying the protocols that support information dissemination in blockchain networks, because although there has been a lot of research regarding blockchain few research studies have focused on blockchain networks and how the dissemination networks work. Information dissemination networks are the networks that support the information dissemination that allow the blockchain concept of a distributed ledger to work properly. Furthermore, information dissemination networks are a key component of existing cryptocurrency systems and have been exploited as breaches for several types of attacks. We describe the current architecture and protocols of such networks, identify their known vulnerabilities, and propose mitigation techniques to these vulnerabilities. For that purpose, we also survey a number of relevant techniques, that have been proposed in different contexts, and that can be useful to harden blockchain information dissemination networks. Finally, we present an architecture that aims at eliminating and/or mitigating current vulnerabilities in these networks.
+%
+%The rest of the report is organized as follows.  Section~\ref{sec:goals} briefly summarizes the goals and expected results of our work. In Section~\ref{sec:bb}, we present the current Bitcoin/ blockchain architecture and how it works. Afterwards, in Section~\ref{sec:vulnerabilities}, we will discuss some vulnerabilities of Bitcoin/ blockchain. In Section~\ref{sec:rproblems}, we present some problems that are common between Bitcoin/blockchain and peer-to-peer networks.  Section~\ref{sec:arc} describes the proposed architecture to be implemented and Section~\ref{sec:evaluation} describes how we plan to evaluate our results. Finally, Section~\ref{sec:fwork} presents the schedule of future work and Section~\ref{sec:conclusions} concludes the report.
+
+
+
+
+For instance in Bitcoin, in an attack known as the partition attack,  an Autonomous System (AS) can isolate a partition of the network to make it vulnerable to double spending (see~\cite{apostolaki2016hijacking}).
+Attacks such as this are increasingly more appealing due to the significant financial advantage that an attacker can gain, if successful.
+It is therefore of the utmost importance to the future of cryptocurrencies to design mechanisms that eliminate, or at least mitigate the possibility of such attacks without sacrificing other important aspects of cryptocurrencies.
+
+We are particularly interested in studying the protocols that support information dissemination in blockchain networks, and their vulnerabilities, as these are the backbone that allows cryptocurrencies to function properly.
+Even though cryptocurrencies have attracted lots of attention from the community on higher level subjects such as the consensus protocol used, few works explore the subject of information dissemination~\cite{miller2015discovering}.
+Strikingly, the few that do, show that information dissemination in cryptocurrencies is brittle and can have a severe impact on the system~\cite{miller2015discovering}.
+
+In this work, we aim to address this problem by: i) doing a principled analysis of information dissemination vulnerabilities in the Bitcoin network and ii) proposing an extensible architecture that eliminates or mitigates these vulnerabilities.
+We consider attackers with varying resources, from a rogue Autonomous System to a set of colluding individuals that target a specific victim, and different motivations in the system.
+To address these, we look at techniques that have been proposed in distributed systems literature such as overlay networks~\cite{jesi2009secure} or node behaviour~\cite{li2006bar}.
+
+Leveraging these techniques, we propose BitShield, an extensible architecture that aims to harden information propagation in cryptocurrency networks. More precisely, we focus on Bitcoin, but as we will see later the approach can be applied to other cryptocurrencies as well. The reason for choosing Bitcoin is that it is the most popular cryptocurrency and its core design is shared by many other cryptocurrencies, hence improvements over Bitcoin could be easily applied in other systems.
+
+The rest of the report is organized as follows.  Section~\ref{sec:goals} briefly summarizes the goals and expected results of our work. In Section~\ref{sec:bb}, we present the current Bitcoin/Blockchain architecture and how it works. Afterwards, in Section~\ref{sec:vulnerabilities}, we will discuss some vulnerabilities of Bitcoin/Blockchain. In Section~\ref{sec:rproblems}, we present some problems that are common between Bitcoin/Blockchain and peer-to-peer networks.  Section~\ref{sec:arc} describes the proposed architecture to be implemented and Section~\ref{sec:evaluation} describes how we plan to evaluate our results. Finally, Section~\ref{sec:work} presents the schedule of future work and Section~\ref{sec:conclusions} concludes the report.
+
+% Falar em geral sobre a necessidade destas tecnologias existir e areas onde podem ser melhoradas. (Semelhante à introdução do projecto de tese)
+
+A maioria das criptomodedas existentes, e em particular a \emph{Bitcoin} (a criptomoeda mais usada correntemente), mantêm um livro-razão descentralizado que regista a sequência ordenada de todas as transacções executadas no sistema~\cite{nakamoto2008bitcoin}.
+A manutenção de um livro-razão de forma descentralizada e aberta tem vindo a ser reconhecida como uma abstracção útil para várias aplicações, para além do uso original como meio de pagamento. 
+Por exemplo,  livros-razão distribuídos podem ser usados para  registar todo o tipo de transacções, contratos, ou outros actos que tipicamente requerem o uso de notários.\footnote{Para uma lista de exemplos, consultar \url{https://blockgeeks.com/guides/blockchain-applications/}}
+
+Um livro-razão distribuído é tipicamente mantido da seguinte forma. Em primeiro lugar, e por razões de eficiência, agrupam-se várias operações que são registadas em conjunto; estes grupos de transações são designadas por \emph{blocos}. Posteriormente, os blocos são organizados numa lista ligada, também designada por \emph{cadeia}.  Na literatura anglo-saxónica, esta cadeira de blocos é simplesmente designada por \emph{blockchain}. 
+%Na maioria dos sistemas, em particular nos sistemas de criptomoeda, a criação dos blocos, e a sua interligação numa cadeia é realizada de forma cooperativa por vários nós.
+Um dos aspectos interessantes de criptomoedas como o Bitcoin consiste no facto dos nós participantes terem um mecanismo de filiação aberto e descentralizado. Isto é, nenhum nó no sistema necessita de conhecer todos os outros nós do sistema e qualquer nó pode juntar-se ou sair do sistema que o protocolo garante a coerência da cadeia gerada mesmo que alguns nós possam ter um comportamento racional ou bizantino.
+
+Tipicamente, os sistemas de manutenção de cadeias de blocos funcionam da seguinte forma. Os nós do sistema, concorrentemente, recebem transacções que posteriormente distribuem pelos restantes nós. De forma também concorrente, os nós tentam criar o próximo bloco da cadeia, o que envolve a resolução de um puzzle criptográfico computacionalmente exigente. 
+%Isto tem duas vantagens.
+%Em primeiro lugar, desencoraja a criação de blocos incluindo transacções inválidas, uma vez que a única forma de um nó ser compensado pela energia gasta na resolução do puzzle é através da aceitação do seu bloco na cadeia.
+%Para além disso, a dificuldade do puzzle reduz a probabilidade de dois nós gerarem blocos simultaneamente, o que limita a ocorrência de bifurcações na cadeia.
+Assim que um nó gera um bloco, distribuí-o pela rede, o que leva ao cancelamento da geração de blocos concorrentes e dá inicio à criação de um novo bloco. Antes de aceitarem (e re-distribuirem) um novo bloco, os nós da rede validam que o bloco é bem formado e constituído por transacções válidas. 
+
+Pela breve descrição acima, é fácil depreender que o processo de propagação de transacções é central na operação dos livro-razão distribuídos. Em primeiro lugar, as transacções necessitam de chegar aos nós que estão a criar blocos, de modo a poderem ser inseridas na cadeia. Em segundo lugar, necessitam também de ser conhecidas pelo restantes nós, pois são necessárias para validar a correcção dos blocos gerados. Na \emph{Bitcoin}, a propagação de transacções baseia-se numa estratégia em que os nós anunciam periodicamente aos vizinhos quais as transacções que possuem. Estes, após receberem anúncios de transações em falta solicitam-nas aos primeiros. 
+Este processo gera uma redundância de mensagens de anúncios.
+Apesar desta redundância ser necessária para tolerância a faltas, experimentalmente observámos que cada nó recebe um número excessivo de anúncios duplicados para cada transação no sistema.
+%verificámos que um nó recebe, por cada transacção, $n$ anúncios (quando bastaria receber um único para garantir a propagação da transacção). 
+
+Neste artigo propomos alterações ao processo de propagação das transacções na rede \emph{Bitcoin} que permitem aumentar a sua eficiência. As nossas alterações exploram assimetrias que actualmente existem neste tipo de redes. De facto, numa rede \emph{Bitcoin}, apenas uma fracção reduzida de nós, cerca de $20\%$, gasta recursos para criar novos blocos (este nós, são designados por \emph{mineiros}); a grande maioria dos nós limita-se a propagar informação. A nossa estratégia consiste em enviesar a propagação das transações para que estas cheguem rapidamente aos mineiros ao mesmo tempo que se reduz a velocidade de propagação,  e o número de duplicados, entre os restantes nós. 
+Esta estratégia explora o facto dos requisitos de latência para a propagação de transações entre nós não mineiros serem relaxados, e também o facto do protocolo \emph{Bitcoin} já possuir mecanismos que permitem propagar as transacções de forma mais eficiente após estas serem inseridas em blocos. Uma avaliação experimental dos mecanismos propostos mostra que é possível reduzir em cerca de $10.7\%$ a quantidade de informação enviada na rede, e reduzir em $40.5\%$ o número total de mensagens trocadas, sem qualquer efeito negativo observável na inserção das transacções no livro-razão.
+
+\section{Goals}
+\label{sec:goals}
+
+This work addresses the problem of hardening against malicious and rational attacks that exploit the information dissemination networks used by current cryptocurrency and blockchain systems. More precisely:
+
+\begin{quotation} 
+\textit{Goals:} We aim at extending current blockchain architectures with a number of defence mechanisms that aim at the mitigation or elimination of the vulnerabilities that can be found in current designs.
+\end{quotation} 
+ 
+To achieve this goal, we will delve into the details of cryptocurrencies and how their dissemination networks work, we will also discuss attacks that exploit information dissemination in these cryptocurrencies, as well as, study a number of techniques that have been proposed in different contexts and assess how these can be adapted to blockchain networks. For instance, in the context of peer-to-peer file sharing systems, techniques have been proposed to avoid attacks that aim at manipulating the overlay network in order to free-ride the system. Such techniques include the construction of robust overlays, and use of reputation systems, among others. We aim at selecting and adapting a number of these techniques in such a way that they can be plugged, with minimal effort, in existing blockchain networks to make them more robust.
+
+The project will produce the following expected results. 
+ 
+\begin{quotation} 
+  \textit{Expected results:} The work will produce 
+  i) Bitshield a system for protecting blockchain networks against information dissemination attacks; 
+  ii) a prototype implementation of this tool that can be plugged in a blockchain network, 
+  iii) an extensive experimental evaluation to assess the effectiveness of the proposed mechanisms and their impact on the performance of the system.
+\end{quotation} 
+

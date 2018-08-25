@@ -1,0 +1,10 @@
+.DS_Store
+*.log
+*.acn
+*.bbl
+*.blg
+*.glo
+*.glsdefs
+*.ist
+*.gz
+*.toc
