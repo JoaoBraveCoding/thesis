@@ -1,6 +1,25 @@
 \chapter{Bitshield}
 \label{chap:arc}
 
+\section{Neighbours ordering}
+To solve the problem referenced in Section~\ref{} NAME takes advantage of asymmetries that already exists in the network. Namely the fact that the majority of blocks are mainly mined by mining pools with only a total of 11 (7.6\%) blocks mined in a day coming from unknown sources.
+
+With this information, the objective of NAME is to prioritize miners in the process of dissemination. To be able to do this the nodes have to discover the best path to the closest miners. Here the best path is the path that takes less time for the transactions of a node to reach a miner. We achieve this by ordering our neighbours by proximity to miners. Hence, the neighbours closest to miners will be on top of our ordering and the ones further away will be at the bottom.
+
+To obtain this classification of neighbours each node will maintain for each neighbour five variables:
+\begin{itemize}
+  \item \textit{n} total number of blocks received by that neighbour;
+  \item \textit{k} accumulated time it took to disseminate a block to us;
+  \item \textit{a} total number of blocks received;
+  \item \textit{z} total number of transactions we sent to that neighbour;
+  \item \textit{y} accumulated time it took for those transactions to be accepted in a block.
+\end{itemize}
+
+The time it takes for a neighbour to relay a block until a node is given by the difference between the current time and the last time the node received a new block from that neighbour. If a neighbour takes more than four hours to relay a block to a node the difference will be the current time minus four hours.  If Given the large number of transactions that flow through the network, instead of maintaining timers for all of them we only maintain a timer each one hundred transactions. This way we do not overburden nodes with metadata.
+
+\[ \mbox{class}^{T}= (\dfrac{k^{T}}{n^{T}} + a^{T} - n^{T} + \dfrac{y^{T}}{z^{T}}) \]
+
+
 \section{Architecture}
 \label{sec:arc}
 Given the problems presented beforehand in this section, our goal is to build a set of extensions to Bitcoin and blockchain technologies to overcome these threats. We have chosen Bitcoin to implement these extensions because it not only has a big user base but it also well documented and has been the focus of many research articles. Whereas other cryptocurrencies do not usually have proper documentation of the protocols they use and their code. With this lack of information, it would be difficult to identify the key modules that we would need to modify or improve to create these extensions for those cryptocurrencies.
@@ -121,14 +140,14 @@ Esta informação é codificada num inteiro e portanto tem um impacto negligenci
 A segunda modificação consiste em identificar localmente, com o passar do tempo, qual o caminho para os mineiros mais próximos e enviar a propagação de anúncios preferencialmente por estes caminhos.
 Note-se que a partir do momento em que uma transacção é incluída num bloco, o processo de propagação por troca epidémica de anúncios deixa de ser relevante.
 
-\subsection{Seriação dos Vizinhos}
+%\subsection{Seriação dos Vizinhos}
 
-Como foi referido acima, a estratégia proposta para poupar largura de banda pressupõe que cada nó descobre quais os melhores caminhos para chegar aos mineiros mais próximos. Isto é conseguido seriando o vizinhos por um critério de proximidade aos mineiros. Os vizinhos mais perto dos mineiros ficam listados no topo da tabela e os mais afastados são seriados no fundo da tabela.
+%Como foi referido acima, a estratégia proposta para poupar largura de banda pressupõe que cada nó descobre quais os melhores caminhos para chegar aos mineiros mais próximos. Isto é conseguido seriando o vizinhos por um critério de proximidade aos mineiros. Os vizinhos mais perto dos mineiros ficam listados no topo da tabela e os mais afastados são seriados no fundo da tabela.
 
-Para obter esta classificação, cada nó mantém, para cada vizinho, três variáveis: \textit{n}, o número total de blocos que recebeu desse vizinho; \textit{k} a distância acumulada desses blocos até aos mineiros que o produziram; e finalmente \textit{a}, o número total de blocos recebidos.
-Para permitir actualizar \textit{k}, associamos ao processo de propagação de um novo bloco, um contador que regista quantos saltos o bloco deu na rede Bitcoin (este campo é incrementado sempre que um nó reencaminha o bloco). Com base nestas variáveis, a classificação dos vizinhos num determinado intervalo de tempo \textit{T} é feita de acordo com a seguinte fórmula (em que os valores de $k$, $a$ e $n$ são os acumulados no período $T$):
+%Para obter esta classificação, cada nó mantém, para cada vizinho, três variáveis: \textit{n}, o número total de blocos que recebeu desse vizinho; \textit{k} a distância acumulada desses blocos até aos mineiros que o produziram; e finalmente \textit{a}, o número total de blocos recebidos.
+%Para permitir actualizar \textit{k}, associamos ao processo de propagação de um novo bloco, um contador que regista quantos saltos o bloco deu na rede Bitcoin (este campo é incrementado sempre que um nó reencaminha o bloco). Com base nestas variáveis, a classificação dos vizinhos num determinado intervalo de tempo \textit{T} é feita de acordo com a seguinte fórmula (em que os valores de $k$, $a$ e $n$ são os acumulados no período $T$):
 
-\[ \mbox{class}^{T}= (\dfrac{k^{T}}{n^{T}} + a^{T}-n^{T}) \]
+%\[ \mbox{class}^{T}= (\dfrac{k^{T}}{n^{T}} + a^{T}-n^{T}) \]
 
 Esta caracterização evita que nós com baixa capacidade de mineração que geram blocos muito esporadicamente, fiquem indefinidamente com uma boa classificação.
 %Isto é relevante pois uma percentagem dos blocos é gerada por nós com baixa capacidade de mineração, que queremos evitar  aleatórios assim, se enviássemos as nossas transações sempre para esses nós elas poderiam demorar muito tempo até aparecerem em blocos podendo até ficarem perdidas.
