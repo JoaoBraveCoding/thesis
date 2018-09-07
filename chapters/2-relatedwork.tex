@@ -1,4 +1,8 @@
 \chapter{Related work}
+\label{chap:rw}
+
+This chapter gives a general overview on how Bitcoin works as well as addressing previous work on both Bitcoin and similar~\acrlong{p2p} systems. It starts by covering the common basics of Bitcoin and Blochain technologies, along with Bitcoins mecanisms for information dissemination. Afterwards it surveys previous work devolped on Bitcoin vulnerabilities. Finaly it covers some work on peer-to peer systems, like secure overlays and  node behaviour.
+
 \section{Bitcoin and Blockchain}
 \label{sec:bb}
 %TODO bitcoin doen't provide that much anonymity
@@ -33,7 +37,7 @@ Furthermore, transactions have to fulfil the following criteria regarding output
 \end{itemize}
 
 The first criteria exist so that the user cannot double spend Bitcoins. The second ensures that unspent Bitcoins need to be connected to a transaction, avoiding forging of unspent Bitcoins. The third guarantees that Bitcoins can only be transferred and not created.
- 
+
 In order for payees to know that previous owners did not sign any earlier transactions, transactions are broadcasted through the Bitcoin network~\cite{nakamoto2008bitcoin}. This feature is required to ensure the payee that the payer did not already spend the Bitcoins he is using to pay him. However, this feature introduces inconsistencies in the system because transactions reach different nodes at different times:
 \begin{itemize}
     \item A node could receive a transaction that transfers Bitcoins from owner \textit{B} to owner \textit{C} but that node has yet to receive the transaction that transferred the Bitcoins from owner \textit{A} to owner \textit{B}. Which might result in either the transaction not being accepted or a longer time to be accepted.
@@ -47,11 +51,11 @@ As there is no guarantee that different nodes receive conflicting transactions i
 
 Since different nodes can commit transactions in a different order, as seen previously, they need to have a way to reach a consensus on the set of transactions that are considered valid. The role of the blocks is precisely to allow nodes to agree upon a set of transactions.
 
-Each block is composed of a set of transactions, a nonce, a pointer to its parent block and other fields not relevant for this explanation. Each block is also associated with a block header that summarizes the information in that block.  
+Each block is composed of a set of transactions, a nonce, a pointer to its parent block and other fields not relevant for this explanation. Each block is also associated with a block header that summarizes the information in that block.
 
 In order for a block to be accepted by other nodes it has to present a~\acrlong{pow} (\acrshort{pow}). \acrshort{pow} consists in finding a byte string, called nonce, that hashed with the block header results in a hash with a given number of zeros at the beginning. That number of zeros at the beginning is also called \textit{target}~\cite{decker2013information}. As cryptographic hash functions are only one-way, discovering such nonce can only be done by trial and error. Furthermore, the difficulty of the \textit{target} is also adjusted. The Bitcoin network measures how much time it took to create the last 2016 blocks in a blockchain. If it took significantly more than 2 weeks, the \acrshort{pow} difficulty is reduced, meaning that there will be fewer zeros at the beginning of the next \textit{target}. If it took significantly less than 2 weeks, the difficulty is increased. Due to the very low probability of successful generation, it's unpredictable which miner nodes in the network will be able to generate the next block.
 
-The \acrshort{pow} is necessary because it adds a real-world cost to produce a block. So with the requirement of a block having to present a \acrshort{pow}, it becomes infeasible for people to modify the history of the system and present it as the truth to anybody else as we will see in Section~\ref{sec:51attack}. 
+The \acrshort{pow} is necessary because it adds a real-world cost to produce a block. So with the requirement of a block having to present a \acrshort{pow}, it becomes infeasible for people to modify the history of the system and present it as the truth to anybody else as we will see in Section~\ref{sec:51attack}.
 
 To incentivise miners for having spent resources on finding the \acrshort{pow}, each time a new block is created a new Bitcoin is generated~\cite{decker2013information}. The reward transaction is only valid if it appears in a block. This transaction is also the only transaction that is the exception to the third criteria seen in the Section~\ref{sec:transactions} which states that the sum of the inputs has to be greater or equal to the sum of the outputs~\cite{decker2013information}.
 
@@ -68,7 +72,7 @@ Regarding the tentatively committed transactions that were rolled back, if they 
 
 Because of this feature, the creator of the block imposes over the network which transactions are going to be committed and what is the order that they are committed~\cite{decker2013information}.
 
-In the next section, we will see how blocks are linked together to create a distributed record of what happened. 
+In the next section, we will see how blocks are linked together to create a distributed record of what happened.
 
 \subsection{Blockchain}
 \label{sec:blockchain}
@@ -81,7 +85,7 @@ As we have seen, blocks are used by nodes to agree on the order of recent transa
 \label{fig:blocks}
 \end{figure}
 
-The blockchain is defined as the longest path from any block to the genesis block. This definition makes the blockchain resemble a tree where the root is the genesis block and the leaves are the new blocks. The height of a block is the distance of that block to the genesis block. The block that is the furthest away from the genesis block is called the blockchain head~\cite{decker2013information}. 
+The blockchain is defined as the longest path from any block to the genesis block. This definition makes the blockchain resemble a tree where the root is the genesis block and the leaves are the new blocks. The height of a block is the distance of that block to the genesis block. The block that is the furthest away from the genesis block is called the blockchain head~\cite{decker2013information}.
 
 As only new blocks are rewarded with new Bitcoins, miners try to build on top of the blockchain head~\cite{decker2013information}. This is because if they were to build on top of previously found blocks it would require them to first reach the same height as the blockchain head and then find the new block~\cite{nakamoto2008bitcoin}. Which is very hard to do because they would have to re-find all the previous \acrshort{pow} and a new \acrshort{pow} while competing against the rest of computational power present in the network. For a miner to have success at doing this he would have to control at least 51\% of the computational power in the network, we will discuss this in section~\ref{sec:51attack}.
 
@@ -89,13 +93,13 @@ As seen in Section~\ref{sec:blocks}, a node can accept a new block or ignore it.
 
 When a node has as blockchain head the block \textit{b} and it receives a new block \textit{b'} where the height of \textit{b' \textgreater b} two things can happen depending on which branch \textit{b} is in:
 \begin{itemize}
-\item If \textit{b} is in the same branch as \textit{b'} then the node only has to apply all transactions in the intermediate blocks incrementally, if any, and then apply the transactions in \textit{b'}, 
+\item If \textit{b} is in the same branch as \textit{b'} then the node only has to apply all transactions in the intermediate blocks incrementally, if any, and then apply the transactions in \textit{b'},
 \item If \textit{b} is on another branch then the node is required to change branches. This implies that the node has to revert all transactions it has been committing until it reaches a common block ancestor. Then, it has to request all intermediate blocks apply the transactions in those blocks and finally apply the transactions on \textit{b'}~\cite{decker2013information}.
 \end{itemize}
 
 The fork may be prolonged throughout multiple block heights \textit{h, h+1, h+2...} where subsets of the network work on the different branches and try to find new blocks at the same time. Eventually one of the branches will surpass the others, leading to the adoption of this branch by all the nodes and sequentially the end of the blockchain fork~\cite{decker2013information}. The discarded blocks are called \textit{orphan blocks}.
 
-As a consequence of blockchain forks, a transaction in Bitcoin is never committed permanently. Because at any point in time it could appear a branch that was not known by the nodes we were interacting with which might influence the state of our transactions. If this new branch is taller than the one where our transactions were confirmed then our transactions will be rolled back else they will not be affected. 
+As a consequence of blockchain forks, a transaction in Bitcoin is never committed permanently. Because at any point in time it could appear a branch that was not known by the nodes we were interacting with which might influence the state of our transactions. If this new branch is taller than the one where our transactions were confirmed then our transactions will be rolled back else they will not be affected.
 
 
 \subsection{Network}
@@ -103,7 +107,7 @@ As a consequence of blockchain forks, a transaction in Bitcoin is never committe
 Bitcoin is supported by a network of peer-to-peer nodes that mine new Bitcoins, create and disseminate transactions and keep a record of what transactions happened. This network has two components that should be looked into to understand some of the vulnerabilities that we will study in the next section. Those two components are:
 
 \begin{enumerate}
-	\item Network overlay - how the Bitcoin peer-to-peer network is built; 
+	\item Network overlay - how the Bitcoin peer-to-peer network is built;
 	\item Information propagation - how does the Bitcoin protocol forward information.
 \end{enumerate}
 
@@ -123,7 +127,7 @@ When a node wants to join the network there are five ways for it to connect with
 By default a node connects to a minimum of 8 outbound peers (connections initiated by this node) and allows up to 125 inbound peers (connections initiated by other nodes). This limitations exist to prevent nodes from being isolated and to prevent nodes from becoming essential to the system. For instance, if a node was responsible for connecting all the nodes of Europe with all ones from Asia if that node failed the system would collapse.
 
 %TODO this needs to be reworked from here
-\todo{This part has to be reworked} Once connected to the network nodes exchange among them the addresses of other nodes, using the \textit{getaddr} and \textit{addr} messages, to maintain the network overlay up to date. 
+\todo{This part has to be reworked} Once connected to the network nodes exchange among them the addresses of other nodes, using the \textit{getaddr} and \textit{addr} messages, to maintain the network overlay up to date.
 Usually, an \textit{addr} message is sent in response to a \textit{getaddr}. However, the \textit{addr} message may also arrive unsolicited, because nodes advertise addresses gratuitously when they \cite{bitcoinwiki}:
 \begin{itemize}
 \item Relay addresses - once a node adds to its list of neighbours a newly received IP addresses it may relay it to other nodes if certain conditions are met;
@@ -132,13 +136,13 @@ Usually, an \textit{addr} message is sent in response to a \textit{getaddr}. How
 \end{itemize}
 In order to maintain a connection with a peer, nodes by default will send a message to peers before 30 minutes of inactivity. If 90 minutes pass without a message being received by a peer, the node will assume that connection has closed \cite{bitcoincorewiki}.
 
-There are also organizations called \textit{mining pools}, composed by multiple nodes that work together to find the \textit{PoW} more efficiently. In mining pools each node test different nonces to find the \textit{PoW} which is faster than a single node testing all the possible nonces. \textit{Mining pools} are composed by multiple nodes and gateways that connect the pool to the Bitcoin network. Once they find a \textit{PoW} and generate a block the reward is then split among the members of the pool that worked on that \textit{PoW} proportionately to the contribution that each member made. 
+There are also organizations called \textit{mining pools}, composed by multiple nodes that work together to find the \textit{PoW} more efficiently. In mining pools each node test different nonces to find the \textit{PoW} which is faster than a single node testing all the possible nonces. \textit{Mining pools} are composed by multiple nodes and gateways that connect the pool to the Bitcoin network. Once they find a \textit{PoW} and generate a block the reward is then split among the members of the pool that worked on that \textit{PoW} proportionately to the contribution that each member made.
 %TODO until here
 \subsubsection*{Information propagation}
 \label{sec:dataexchange}
 In order to exchange messages a Bitcoin node has to each of its neighbours, a message queue with messages that will be sent once a timer associated with each queue ends.
 
-\paragraph*{Transactions} 
+\paragraph*{Transactions}
 The usual way transactions are relayed to other nodes works as follows. Node \textit{A} creates a new transaction, \textit{A} will add the advertisement for that transaction to the message queue of all his neighbours. If \textit{A} learns that one of it's neighbours already has that transaction, it will remove the advertisement for that transaction from the queue of that neighbour. Once a neighbour \textit{B} receives the advertisement it will check if it already has that transaction and if it does not it will sent to \textit{A} a \textit{GetData} requesting the new data. Node \textit{A} will then send the requested data individually meaning that if it receives a request for ten transactions it will send ten separate messages. Once \textit{B} receives the new transaction it will verify if it is valid and if it is it will also relay it through his neighbours.
 
 Transactions can also be sent unsolicited.
@@ -156,9 +160,9 @@ This way there are in total tree ways a block can be relayed as we can see in Fi
 %end{itemize}
 
 
-%When new transactions (\textit{txs}) or blocks (\textit{blocks}) are created, the node \textit{A} that generated them will broadcast an \textit{inv} message. This message contains information regarding \textit{txs} and \textit{blocks} that \textit{A} knows about. 
+%When new transactions (\textit{txs}) or blocks (\textit{blocks}) are created, the node \textit{A} that generated them will broadcast an \textit{inv} message. This message contains information regarding \textit{txs} and \textit{blocks} that \textit{A} knows about.
 
-%Once a node \textit{B} receives an \textit{inv} message that contains a \textit{tx} or \textit{block} that he does not have, it will reply to \textit{A} with a \textit{GetData} requesting the new data. Upon receiving the \textit{GetData} message, node \textit{A} will then send the requested data. 
+%Once a node \textit{B} receives an \textit{inv} message that contains a \textit{tx} or \textit{block} that he does not have, it will reply to \textit{A} with a \textit{GetData} requesting the new data. Upon receiving the \textit{GetData} message, node \textit{A} will then send the requested data.
 
 %Finally, once node \textit{B} receives the new data it will verify it. If the new data is valid, it will also announce it to its neighbours with a \textit{inv} message.
 
@@ -174,7 +178,7 @@ In conclusion, Bitcoin is made up of multiple modules as seen in  Fig.~\ref{fig:
 
 \textit{Mempool} is the place where the node stores the transactions that are going to be included in next blocks. The \textit{Validation Engine} is in charge of validating the transactions/blocks that are received. The \textit{Miner} is the module responsible for mining blocks. Finally, the \textit{Storage Engine} is the module that manages all the databases where a node stores all the relevant data like \textit{Blocks}, \textit{Blocks Headers} and \textit{Coins}.
 
-The \textit{Wallet} is the module where the Bitcoins of the user are stored and the \textit{RPC} module is used so that applications can interact with Bitcoin, hence providing an API to the outside. 
+The \textit{Wallet} is the module where the Bitcoins of the user are stored and the \textit{RPC} module is used so that applications can interact with Bitcoin, hence providing an API to the outside.
 
 The modules that we are more interested in are the \textit{Peer Discovery} and the \textit{Connection Manager} because of their connection to the network aspect of Bitcoin. The \textit{Peer Discovery} is responsible for building the Network and maintaining it. The \textit{Connection Manager} is accountable for managing the way data and control messages are broadcasted.
 
@@ -188,8 +192,8 @@ The modules that we are more interested in are the \textit{Peer Discovery} and t
 Next, we will take a look at some of the vulnerabilities of Bitcoin and compare it with other cryptocurrencies to understand which modules have to be modified in order to fix those problems.
 
 
-%O sistema Bitcoin~\cite{nakamoto2008bitcoin} foi criado em 2008 com o objetivo de disponibilizar um meio seguro e anónimo onde duas entidades possam realizar transações entre si sem terem de confiar em terceiros. Para este propósito o sistema possuí uma criptomoeda que pode ser trocada entre várias entidades envolvidas numa transação. Todas as transacções são agrupadas em blocos e registadas num livro-razão, mantido de forma descentralizada. Para além de manter um registo das transacções, o livro-razão permite também seriar todas as transacções e, desta forma, evitar que um utilizador use as mesmas moedas em mais que uma transacção (fenómeno designado na literatura anglo-saxónica por \emph{double spending}). 
-%O livro-razão da Bitcoin  é construído ligando cada bloco ao seu predecessor formando uma corrente infinita de blocos conhecida como a \textit{blockchain}. 
+%O sistema Bitcoin~\cite{nakamoto2008bitcoin} foi criado em 2008 com o objetivo de disponibilizar um meio seguro e anónimo onde duas entidades possam realizar transações entre si sem terem de confiar em terceiros. Para este propósito o sistema possuí uma criptomoeda que pode ser trocada entre várias entidades envolvidas numa transação. Todas as transacções são agrupadas em blocos e registadas num livro-razão, mantido de forma descentralizada. Para além de manter um registo das transacções, o livro-razão permite também seriar todas as transacções e, desta forma, evitar que um utilizador use as mesmas moedas em mais que uma transacção (fenómeno designado na literatura anglo-saxónica por \emph{double spending}).
+%O livro-razão da Bitcoin  é construído ligando cada bloco ao seu predecessor formando uma corrente infinita de blocos conhecida como a \textit{blockchain}.
 
 %O protocolo para manter o livro-razão na Bitcoin é relativamente complexo, e inclui várias funcionalidades que se complementam. Em primeiro lugar, a Bitcoin corre algoritmos de filiação, que tentam assegurar que cada nó mantêm ligações com outros nós do sistema escolhidos de forma aleatória. Estas relações de vizinhança criam uma rede sobreposta que é usada para disseminar informação na rede, nomeadamente: informação sobre as transacções submetidas pelos clientes e informação sobre os novos blocos da cadeia.
 
@@ -197,13 +201,13 @@ Next, we will take a look at some of the vulnerabilities of Bitcoin and compare 
 
 %Se um mineiro recebe o n-ésimo da cadeia enquanto ele próprio o está a tentar gerar, o processo de criar um novo bloco é abortado. Este mecanismo faz com que a probabilidade de se gerarem duas versões distintas, criando uma bifurcação, seja muito pequena. Nos casos em que uma bifurcação acontece, o desempate é feito com base no comprimento de cada ramo. Quando um nó se apercebe que está a trabalhar sobre uma bifurcação que não é a mais longa, descarta essa bifurcação e junta-se ao ramo (que considera ser o) principal.
 
-%Os algoritmos usados na Bitcoin para propagar blocos e transações têm evoluído com o tempo, e incluem um conjunto de mecanismos que pretendem evitar o desperdício de largura de banda na rede. 
+%Os algoritmos usados na Bitcoin para propagar blocos e transações têm evoluído com o tempo, e incluem um conjunto de mecanismos que pretendem evitar o desperdício de largura de banda na rede.
 %Descrevemos de seguida sucintamente o protocolo.
 %Como referido anteriormente, as transações são disseminadas através de mensagens de anúncio \textsl{Inv} que contêm um conjunto de transações conhecidas pelo emissor.
 %Ao receber uma mensagem de \textsl{Inv}, o receptor determina quais as transações que desconhece e pede-as ao emissor, enviando-lhe uma mensagem de \textsl{GetData} que, por sua vez, responde com uma mensagem \textsl{TX} por cada transação pedida.
-%Os blocos são disseminados através de duas estratégias distintas. 
+%Os blocos são disseminados através de duas estratégias distintas.
 %A primeira estratégia, e também a mais antiga, consiste em anunciar blocos através de mensagens \textsl{Headers}.
-%Caso o bloco seja desconhecido, ou algumas das transações que o compõem, esse bloco é pedido através da  mensagem \textsl{GetData}, sendo o bloco completo enviado através de uma mensagem \textsl{Block} 
+%Caso o bloco seja desconhecido, ou algumas das transações que o compõem, esse bloco é pedido através da  mensagem \textsl{GetData}, sendo o bloco completo enviado através de uma mensagem \textsl{Block}
 %que contem toda a informação necessária para validar o bloco.
 %Caso o nó não conheça o predecessor do bloco a ser anunciado pode requisitar o cabeçalho deste com uma mensagem \textsl{GetHeaders}.
 %A segunda estratégia consiste em enviar somente um sumário do bloco, através de uma mensagem de \textsl{CmpctBlock} (bloco compacto).
@@ -222,13 +226,13 @@ Next, we will take a look at some of the vulnerabilities of Bitcoin and compare 
 
 \section{Bitcoin and Blockchain vulnerabilities}
 \label{sec:vulnerabilities}
-In this section, our objective is to look at known vulnerabilities of Bitcoin, as well as, look into the solutions proposed to those vulnerabilities. We will also compare Bitcoin with other cryptocurrencies to see where Bitcoin stands in comparison to the state of the art. 
+In this section, our objective is to look at known vulnerabilities of Bitcoin, as well as, look into the solutions proposed to those vulnerabilities. We will also compare Bitcoin with other cryptocurrencies to see where Bitcoin stands in comparison to the state of the art.
 
 This section is divided into four sections, one for each of the main vulnerabilities we have identified.
 
 \subsection{Information Eclipsing}
 \label{sec:ieclipsing}
-This vulnerability was found in \textit{Information Propagation in the Bitcoin Network} \cite{decker2013information} and it happens because of following behavior. Lets consider that the whole network recognizes a block \textit{b} at height $H_b$ as the blockchain head. Then at two different locations of the network two new blocks are discovered. These blocks are guaranteed to be different as seen in Section \ref{sec:blocks}, lets call each one \textit{b'} and \textit{b''}. 
+This vulnerability was found in \textit{Information Propagation in the Bitcoin Network} \cite{decker2013information} and it happens because of following behavior. Lets consider that the whole network recognizes a block \textit{b} at height $H_b$ as the blockchain head. Then at two different locations of the network two new blocks are discovered. These blocks are guaranteed to be different as seen in Section \ref{sec:blocks}, lets call each one \textit{b'} and \textit{b''}.
 
 Now both blocks are going to be broadcast through the network because both are at height $H_{b+1}$. Hence, when a node receives either \textit{b'} or \textit{b''} it will consider it as the new blockchain head and will broadcast it to its neighbours. The problem is, when a node that already received \textit{b'} receives \textit{b''} or vice-versa that node will not broadcast \textit{b''} through the network as it did with \textit{b'}, because it already moved to a new blockchain head at the same height. As a consequence, only nodes that received both \textit{b'} and \textit{b''} know about the existence of a fork. This diminishes the effective computational power in the network because the network will be working on different blockchain heads. Hence, empowering some of the attacks in the following sections.
 
@@ -258,16 +262,16 @@ Other coins affected by this problem tried to solve the problem in different way
 
 Ripple is also not affected by this attack because in ripple consensus is not connected with computational power. In ripple, the consensus is achieved by a set of trusted nodes called validators. Validators are chosen based on the expectation they will not collude in a coordinated effort to falsify data relayed to the network. A disadvantage of this approach is that it removes decentralization characteristics of the cryptocurrency. In Bitcoin, everyone ``votes" when they start trying to mine on a block in Ripple power of ``voting" is removed from the users.
 
-%TODO add ripple comment 
+%TODO add ripple comment
 
 \subsection{Partition Attack}
-This attack allows an adversary Autonomous System (AS) level to isolate a set of nodes from the rest of the network using the Border Gateway Protocol (BGP) hijack. 
+This attack allows an adversary Autonomous System (AS) level to isolate a set of nodes from the rest of the network using the Border Gateway Protocol (BGP) hijack.
 
-BGP hijack consists in injecting forged information in the network on how to reach one or more IP prefixes, leading other ASes to send traffic to the wrong location. 
+BGP hijack consists in injecting forged information in the network on how to reach one or more IP prefixes, leading other ASes to send traffic to the wrong location.
 
 The attack starts by the given AS diverting the traffic destined to a certain set of nodes (which we will call \textit{P}) through BGP hijack. This means that all traffic destined to \textit{P} goes to the AS instead. Then, the AS will examine the traffic being sent to \textit{P} and it will drop every message that has a Bitcoin header in the TCP payload. The rest of the traffic is considered irrelevant and reaches \textit{P}.
 
-During the interception of traffic, there can be two types of relevant traffic: i) traffic crossing the partition from the outside to the inside; ii) traffic that appeared from inside the partition. In the first case, the AS only has to drop Bitcoin messages but in the second case, the AS has to analyse the exchanged Bitcoin messages to detect the ``leakage points", which are nodes that have connections to the outside of the partition that the AS cannot control. 
+During the interception of traffic, there can be two types of relevant traffic: i) traffic crossing the partition from the outside to the inside; ii) traffic that appeared from inside the partition. In the first case, the AS only has to drop Bitcoin messages but in the second case, the AS has to analyse the exchanged Bitcoin messages to detect the ``leakage points", which are nodes that have connections to the outside of the partition that the AS cannot control.
 
 To accomplish this, the attacker checks, for every packet, if the sender belongs to \textit{P}. If the sender belongs to \textit{P} the attacker will check whether the sender is advertising information from outside \textit{P}. Particularly, the attacker checks whether the packet contains an \textit{inv} message with the hash of a block mined outside of \textit{P}. If yes then the sender was a ``leakage points"  \cite{apostolaki2016hijacking}.
 
@@ -275,7 +279,7 @@ Once the AS finds out the ``leakage points" it will exclude them from \textit{P}
 
 This attack leads to different consequences depending on the number of nodes successfully isolated. If the number is low the impact of the attack is basically a Denial of Service and the nodes within \textit{P} have zero confirmation for double spending. If the number of nodes is high it might result in revenue loss for miners and the side with higher computational power will decide which transactions are committed because they will generate blocks faster. This aspect will be discussed in more detail in Section \ref{sec:rpsummary}.
 
-Regarding solutions for this attack in \cite{apostolaki2016hijacking} the authors suggest, increasing the diversity of the node connections while taking routing into account, monitoring the RTT because the RTT value would increase if a node was being attacked and a few others. 
+Regarding solutions for this attack in \cite{apostolaki2016hijacking} the authors suggest, increasing the diversity of the node connections while taking routing into account, monitoring the RTT because the RTT value would increase if a node was being attacked and a few others.
 
 The success of this attack depends on the protocol used by the ASes to advertise addresses. For instance, if BGP was not used by the ASes this attack would not be possible. Still, a module that can be changed in Bitcoin to address this problem is the \textit{Peer Discovery}. Because this module should establish more resilient connections.
 
@@ -284,7 +288,7 @@ In Ethereum and Ripple, this attack is not possible as the connections between n
 \subsection{Delay Attack}
 The objective of this attack is to slow down the propagation of new blocks sent to a set of nodes without disrupting their connections \cite{apostolaki2016hijacking}.
 
-The mentioned attack has two different ways of being performed depending on the direction the attacker is able to intercept the traffic: in the victim network \textit{V$\,\to\,$N} direction or network victim \textit{N$\,\to\,$V} direction. 
+The mentioned attack has two different ways of being performed depending on the direction the attacker is able to intercept the traffic: in the victim network \textit{V$\,\to\,$N} direction or network victim \textit{N$\,\to\,$V} direction.
 
 If the attacker is able to intercept the connection in the \textit{V$\,\to\,$N} direction then the attack works as follows. When the victim requests a block to the network the attacker will change the block request to another block which will lead the victim waiting for a response. After almost 20 minutes, time limit where the victim requests the block to another neighbour, the attacker will modify another message sent by the victim to that neighbour, probably a transaction request since are the most common message type, to request the initial block that the victim wanted. This way the attacker avoids the victim from dropping the connection with that neighbour, which allows the attacker to perform the attack multiple times.
 
@@ -294,7 +298,7 @@ The impact of this attack depends on the node that is being attacked if it's a s
 
 This attack is successful because Bitcoin connections are not tamper proof and Bitcoin does not requests the block again when presented with a corrupted block, this is a problem related to the \textit{Connection Manager} module.
 
-A solution for this attack is monitoring the RTT, as the RTT increases considerably when the node is being attacked. Other solution proposed in \cite{apostolaki2016hijacking} is encrypting Bitcoin communications which would not avoid the packets from being dropped by an attacker but it would prevent them from eavesdroppping and tampering with connections. The disadvantage with this approach is that it would require additional computations making the system slower. 
+A solution for this attack is monitoring the RTT, as the RTT increases considerably when the node is being attacked. Other solution proposed in \cite{apostolaki2016hijacking} is encrypting Bitcoin communications which would not avoid the packets from being dropped by an attacker but it would prevent them from eavesdroppping and tampering with connections. The disadvantage with this approach is that it would require additional computations making the system slower.
 
 Ethereum and Ripple are not affected by this attack as all the connections are encrypted but the attacker can still drop packets. But they sacrifice performance.
 
@@ -316,7 +320,7 @@ It is also worth noticing that although cryptocurrencies not relatable with Bitc
 \multicolumn{1}{|l|}{\begin{tabular}[c]{@{}l@{}}Partition\\ Attack\end{tabular}} &  & $\checkmark$ &  & $\checkmark$ & $\checkmark$ &  \\ \hline
 \multicolumn{1}{|l|}{\begin{tabular}[c]{@{}l@{}}Delay \\ Attack\end{tabular}} &  & $\checkmark$ &  & $\checkmark$ & $\bigcirc$ &  \\ \hline
 \end{tabular}
-\caption{Cryptocurrencies and their respective problems. \\ $\checkmark$ - Not affected by the attack \\ $\bigcirc$ - Might be affected by the attack} 
+\caption{Cryptocurrencies and their respective problems. \\ $\checkmark$ - Not affected by the attack \\ $\bigcirc$ - Might be affected by the attack}
 \label{fig:tabel1}
 \end{table}
 
@@ -358,7 +362,7 @@ We will now take a look at some overlays technologies.
 
 \paragraph*{\textbf{Brahms} \cite{bortnikov2009brahms}} This system was designed to provide a random sample of nodes in a large dynamic system subject to Byzantine attacks that poison the views of correct nodes. Brahms is a membership service that stores a sublinear number of ids at each node and provides each node with independent random node samples that converge to uniform ones over time. This is achieved by Brahms because in its sampler every node has the same probability of being sampled and the gossip algorithm uses two means for propagation: (1) push – sending the node’s id to some other node, and (2) pull – retrieving the view from another node. Pushes are needed to reinforce knowledge about nodes that are under-represented and pulls are needed to spread existing knowledge within the network. Brahms protects itself against poisoning attacks by limiting the number of pushes received by nodes.
 
-\paragraph*{\textbf{Identifying Malicious Peers Before It's Too Late: A Decentralized Secure Peer Sampling Service} \cite{jesi2007identifying}} This system was built to cope with malicious nodes executing “hub attacks”. This system uses a set of multiple overlays, this means that each node belongs to different overlays, and the neighbourhood at every instance will be distinct with very high probability because the overlays have independently random-like topologies. In this system, the concept of extra caches is introduced as being the set of caches belonging to each peer; every cache in the set is a random snapshot of a distinct PSS overlay. Essentially, the multiple caches are useful in order to perceive how malicious nodes are spreading the infection from distinct directions over distinct overlays. Due to the spreading infection, is expected that common node ID patterns will emerge in all (or in the majority) of the caches. Then based on this patterns, each peer can build a set of statistics in order to guess or detect who are the malicious nodes. If a node is detected as malicious the node will decline gossip from that node. 
+\paragraph*{\textbf{Identifying Malicious Peers Before It's Too Late: A Decentralized Secure Peer Sampling Service} \cite{jesi2007identifying}} This system was built to cope with malicious nodes executing “hub attacks”. This system uses a set of multiple overlays, this means that each node belongs to different overlays, and the neighbourhood at every instance will be distinct with very high probability because the overlays have independently random-like topologies. In this system, the concept of extra caches is introduced as being the set of caches belonging to each peer; every cache in the set is a random snapshot of a distinct PSS overlay. Essentially, the multiple caches are useful in order to perceive how malicious nodes are spreading the infection from distinct directions over distinct overlays. Due to the spreading infection, is expected that common node ID patterns will emerge in all (or in the majority) of the caches. Then based on this patterns, each peer can build a set of statistics in order to guess or detect who are the malicious nodes. If a node is detected as malicious the node will decline gossip from that node.
 
 \paragraph*{\textbf{MACHETE} \cite{raposo2016machete}} This system was designed to establish an overlay network and scatter data over the available paths, thus reducing the effectiveness of snooping attacks. Thus, it protects against passive attackers that eavesdrop on communications at certain physical locations. This system sends data through multiple paths using multiple interfaces that the computer has available, hence protecting against snooping attacks. In contrast to the other systems presented previously in MACHETE, the client is provided with the full overlay of the system when he wants to send a message. Then the client will choose the best path according to its RTT value. This system is interesting to us because of its feature of sending data through multiple paths, something that if applied correctly to Bitcoin could protect against certain attacks as we will see in Section \ref{sec:arc}.
 This tool is not like the other PSS presented because it provides every client with a full view of the network instead of a partial view.
@@ -371,17 +375,17 @@ It is important to look at these behaviours and the approaches to punish them be
 
 Next, we discuss how some approaches deal with some of these possible behaviours.
 
-\paragraph*{\textbf{BitTorrent} \cite{cohen2003incentives}} 
+\paragraph*{\textbf{BitTorrent} \cite{cohen2003incentives}}
 The approach described in this paper was conceived to cope with free riders in a file sharing network. A free rider in this systems is a peer that is trying to have the highest possible download rate while having a low upload rate. This system tries to prevent \textit{free riders} with a policy of tit-for-tat. This is achieved by peers uploading only to peers which upload to them. This way the network will have at any given time connections which are actively transferring in both directions.
 
-\paragraph*{\textbf{BAR gossip} \cite{li2006bar}} 
+\paragraph*{\textbf{BAR gossip} \cite{li2006bar}}
 This tool was designed with the objective of being the first streaming application that guaranteeing a predictable throughput and low latency in the BAR model, in which non-altruistic nodes can behave in a self-serving or even arbitrarily malicious way. This system tries to prevent free riders by having two protocols to disseminate information: Balanced Exchange and Optimistic Push.
 
 \textit{Balanced Exchange} In this protocol peers exchange information while keeping the trade equal. This means that the amount of information that a peer uploads is the amount that it is able to download. This exchange is ciphered and signed so that both parties act faithfully.
 
 \textit{Optimistic Push} This protocol exists to compensate peers that have fallen behind and are not able to perform a Balanced Exchange. In this protocol, the peers that have fallen behind when they are unable to provide useful updates they are allowed to send junk. To avoid peers from abusing this protocol the amount of junk sent has to be equal the amount of actual information. In this paper the authors also state that a rational node would not choose a strategy of just sending junk because i) it would not have a discernible impact on benefit and ii) junk is more expensive to send than legitimate updates
 
-\paragraph*{\textbf{LiFTinG} \cite{guerraoui2010lifting}} 
+\paragraph*{\textbf{LiFTinG} \cite{guerraoui2010lifting}}
 This protocol was the first to detect \textit{free riders} in a gossip-based content dissemination system with asymmetric data exchanges.
 In this protocol, each peer is monitored by a set of peers chosen randomly. Each peer has a score that if it drops below a certain threshold, it is assumed that that peer is \textit{free riding}. The score drops if a node that was exchanging information with the \textit{free rider} suspects that he is not being faithful and broadcasts a blame message against him. Once a node is considered guilty by the managers they spread a message to inform the other peers hence, punishing the \textit{free rider}.
 
@@ -390,7 +394,7 @@ In this protocol, each peer is monitored by a set of peers chosen randomly. Each
 \label{sec:rpsummary}
 As we have covered in the introduction of this section, the problems described previously also affect Bitcoin. But given the difference between Bitcoin and the usual peer-to-peer technologies the solutions that we just covered cannot be implemented directly.
 
-So in this section, our objective is to cover each problem presented previously and explain how they transfer to Bitcoin and the implications they have. 
+So in this section, our objective is to cover each problem presented previously and explain how they transfer to Bitcoin and the implications they have.
 
 %Mosquito attack
 \paragraph*{\textbf{Mosquito attack}} While analyzing the Bitcoin protocol to disseminate addresses, we found that we might be able to reproduce this attack in Bitcoin.
@@ -418,7 +422,7 @@ Single nodes usually do not have a very good connection to the rest of the netwo
 
 
 
-%Quando um nó recebe um bloco compacto através de uma mensagem \textsl{CmpctBlock}, o nó verifica se já possui esse bloco e caso já o possua  atualiza apenas o inventário do vizinho que lhe enviou o bloco. Caso não possua o bloco, verifica se têm todas as transações presentes no bloco;  se não possuir uma ou mais transações requisita-as com uma mensagem de \textsl{GetBlockTX} e coloca o bloco numa lista de blocos parcialmente construidos. Assim que receber a resposta à mensagem de requisito de transações acaba de reconstruir o bloco e inicia o processamento do novo bloco. Quando um nó recebe um bloco completo através de uma mensagem \textsl{Block}, caso não o possua vai processá-lo. 
+%Quando um nó recebe um bloco compacto através de uma mensagem \textsl{CmpctBlock}, o nó verifica se já possui esse bloco e caso já o possua  atualiza apenas o inventário do vizinho que lhe enviou o bloco. Caso não possua o bloco, verifica se têm todas as transações presentes no bloco;  se não possuir uma ou mais transações requisita-as com uma mensagem de \textsl{GetBlockTX} e coloca o bloco numa lista de blocos parcialmente construidos. Assim que receber a resposta à mensagem de requisito de transações acaba de reconstruir o bloco e inicia o processamento do novo bloco. Quando um nó recebe um bloco completo através de uma mensagem \textsl{Block}, caso não o possua vai processá-lo.
 
 
 %No simulador,  concretizámos o funcionamento das principais mensagens trocadas por nós após terem estabelecido ligações, essas mensagens são mensagens \textsl{Inv, GetHeaders, Headers, GetData, Block, CmpctBlock, GetBlockTX, BlockTX} e \textsl{TX} . Vamos agora explicar o  comportamento de um nó quando recebe cada uma destas mensagens.
@@ -430,7 +434,7 @@ Single nodes usually do not have a very good connection to the rest of the netwo
 %\item Verifica se já possui a informação anunciada. Caso não a possua, vai adicionar essa informação a uma lista de informação a pedir.
 %\end{itemize}
 
-%No depois de ter iterado por todos os anúncios, o nó envia uma mensagem de \textsl{GetHeaders} caso o anúncio tenha sido de blocos e envia uma mensagem \textit{GetData} caso o anúncio tenha sido de transações. 
+%No depois de ter iterado por todos os anúncios, o nó envia uma mensagem de \textsl{GetHeaders} caso o anúncio tenha sido de blocos e envia uma mensagem \textit{GetData} caso o anúncio tenha sido de transações.
 %Quando um nó recebe uma mensagem de pedido de informação \textsl{GetData, GetHeaders}, vai atualizar o inventário do vizinho que lhe enviou a mensagem e vai responder com a informação requisitada.
 %Quando um nó recebe uma mensagem de \textsl{Headers}, o nó itera sobre todos os cabeçalhos incluídos e adiciona-os à sua cadeia de cabeçalhos. Caso não conheça o antecessor de um bloco, o nó requisita também o cabeçalho respectivo. Depois de adicionar os cabeçalhos à cadeia de cabeçalhos, requisita os blocos associados a esses cabeçalhos com uma mensagem \textsl{GetData}.
 %Quando um nó recebe uma mensagem de \textsl{TX}, vai atualizar o inventário do vizinho e seguidamente caso não possua a transação, adiciona-a à sua lista de transacções \textit{pendentes} e invoca uma função, designada por \textit{push\_to\_send}, para disseminar essa transação aos vizinhos que ainda não a possuem.
@@ -440,8 +444,8 @@ Single nodes usually do not have a very good connection to the rest of the netwo
 
 %Na versão mais recente à data da escrita deste artigo, um nó quando pretende propagar um bloco envia simplesmente informação acerca das transacções incluídas no bloco, bem como a sua ordenação e a solução do criptopuzzle, numa mensagem conhecida como \emph{compact block (CmpctBlock)}. Se o nó que recebe o bloco já possui informação sobre as transacções, pode reconstruir e validar o bloco de imediato. Caso contrário, solicita a transferência das transacções em falta. Isto evita ter de transferir informação completa sobre cada transacção múltiplas vezes para o mesmo destino. Este mecanismos, designado por propagação de \emph{blocos compactos} é uma optimização do mecanismos original, onde toda a informação sobre as transacções contidas no bloco era (re-)enviada conjuntamente com o bloco.
 %
-%Para que uma dada transacção seja inserida no livro-razão, esta tem que chegar aos mineiros que estão a gerar os blocos. A rede Bitcoin tem um mecanismos de propagação epidémica para propagar as transacções pela rede. 
-%Periodicamente, cada nó anuncia aos seus vizinhos quais as transacções que conhece. 
+%Para que uma dada transacção seja inserida no livro-razão, esta tem que chegar aos mineiros que estão a gerar os blocos. A rede Bitcoin tem um mecanismos de propagação epidémica para propagar as transacções pela rede.
+%Periodicamente, cada nó anuncia aos seus vizinhos quais as transacções que conhece.
 %Quando um nó vê o anúncio de uma transacção que não conhece, solicita a transferência da mesma.
-%Desta forma, os vizinhos ficam a conhecer transacções novas. 
+%Desta forma, os vizinhos ficam a conhecer transacções novas.
 %Este mecanismo resulta em várias ineficiências que discutimos na secção seguinte.

@@ -1,4 +1,6 @@
 \chapter{Bitshield}
+\label{chap:arc}
+
 \section{Architecture}
 \label{sec:arc}
 Given the problems presented beforehand in this section, our goal is to build a set of extensions to Bitcoin and blockchain technologies to overcome these threats. We have chosen Bitcoin to implement these extensions because it not only has a big user base but it also well documented and has been the focus of many research articles. Whereas other cryptocurrencies do not usually have proper documentation of the protocols they use and their code. With this lack of information, it would be difficult to identify the key modules that we would need to modify or improve to create these extensions for those cryptocurrencies.
@@ -22,7 +24,7 @@ In Section \ref{sec:evulne}, we will propose possible approaches to vulnerabilit
 \paragraph*{\textbf{Information Eclipsing}}
 Our approach to this problem is to implement the optimization in the propagation discussed in Section \ref{sec:ieclipsing}. To achieve this, when a node receives a block the verification of a block is split into two phases an initial difficulty check and a transaction validation. After the node validating that the block is valid through the first validation phase, the node would asynchronously broadcast \textit{inv} messages to his neighbours while performing the transaction validation. This will decrease the mean time it takes for a block to reach a node hence reducing the probability of forks happening. The drawback of this solution is that it only lowers the probability this problem happening.
 
-%Our approach to this problem is to make the whole network aware of the existence of a fork. To achieve this, when a node received a block with the same height as the blockchain head, if that block was received soon after the node had received the current blockchain head then instead of not broadcasting it, the node would broadcast it allowing the full network to be aware of the fork. We believe this would lead to the end of the fork much faster. Because by making the full network aware of the fork nodes could choose which branch they would mine on. 
+%Our approach to this problem is to make the whole network aware of the existence of a fork. To achieve this, when a node received a block with the same height as the blockchain head, if that block was received soon after the node had received the current blockchain head then instead of not broadcasting it, the node would broadcast it allowing the full network to be aware of the fork. We believe this would lead to the end of the fork much faster. Because by making the full network aware of the fork nodes could choose which branch they would mine on.
 
 It would also be interesting implementing the solution Ethereum used to solve this problem, \textit{Uncle Blocks} mentioned in Section \ref{sec:ieclipsing}. Where nodes include uncle blocks in future blocks strengthening the chain. They also reward nodes that found uncle blocks and nodes that add uncle blocks to their blocks which would compensate nodes that had their computational power wasted in a block that was not accepted. The problem with this approach is that it would have an increase in the block size and it would require more computational power from the nodes.
 
@@ -41,12 +43,12 @@ We also want to modify the behaviour of nodes in the \textit{N$\,\to\,$V} direct
 \paragraph*{\textbf{Mosquito attack}}
 Our procedure to cope with this attack is to implement a system where every node analyzes the \textit{addr} messages that their neighbours share with them to identify if the neighbours are trying to attack them. The idea is if all neighbours are sharing the same set of addresses with a node through a period of time then the probability of them being malicious is high. If a node identifies a set of neighbours as malicious, he would ban those nodes and re-start its connection to the network. The disadvantages of this strategy are the extra computational power and memory wasted on the analysis of the \textit{addr} messages.
 
-If we were to implement an approach where it costs a bit of the currency to send messages like Ripple or Ethereum. We would cope with this attack but it would require relevant changes to the Bitcoin protocol something that is not desirable by users in Bitcoin. 
+If we were to implement an approach where it costs a bit of the currency to send messages like Ripple or Ethereum. We would cope with this attack but it would require relevant changes to the Bitcoin protocol something that is not desirable by users in Bitcoin.
 
 Implement authenticated messages for sharing IP addresses would also protect against the attack but it would require much more computational power and a system to distribute asymmetric key pairs.
 
 \paragraph*{\textbf{51\% attack}}
-For this attack, we are not going implement any solution in particular since this attack is always possible unless we control who joins the peer-to-peer network. 
+For this attack, we are not going implement any solution in particular since this attack is always possible unless we control who joins the peer-to-peer network.
 
 Still performing this attack in Bitcoin is very hard. Given the current competition in the mining community and the current size of the network, it would be very costly to gather 51\% of computational power.
 
@@ -67,11 +69,11 @@ To prevent this we are going to implement a solution like LiFTinG \cite{guerraou
 Another possible approach that would minimize the impact of this behaviour is the implementations of uncle blocks. Because in this system node still gets rewarded for finding a block at the same height as the new blockchain head, up to a certain height difference.
 
 \subsection{Summary}
-Table \ref{fig:tabel2} summarizes the approaches we discussed above. As is possible to observe, there is no solution that fixes all the problems. 
+Table \ref{fig:tabel2} summarizes the approaches we discussed above. As is possible to observe, there is no solution that fixes all the problems.
 
-From Table \ref{fig:tabel2} there are some approaches that are not feasible to implement given the Bitcoin requirements for performance, those approaches are the \textit{encrypted messages} and \textit{authenticated messages}. Both approaches would require nodes to perform considerable more computations which would lower the profit of miners. Hence, these solutions would never be accepted by the Bitcoin community. 
+From Table \ref{fig:tabel2} there are some approaches that are not feasible to implement given the Bitcoin requirements for performance, those approaches are the \textit{encrypted messages} and \textit{authenticated messages}. Both approaches would require nodes to perform considerable more computations which would lower the profit of miners. Hence, these solutions would never be accepted by the Bitcoin community.
 
-Other approaches like \textit{uncle blocks} and the \textit{implementation of fees} would be equally hard to implement given the relevant impact they would have on the protocol. Since \textit{uncle blocks} requires multiple nodes to be rewarded by the discovery of a new block and the \textit{implementation of fees} would require fees to be imposed on messages. Hence, both solutions would lower the profit of not only miners but also users and would be highly vetted against by the Bitcoin community. 
+Other approaches like \textit{uncle blocks} and the \textit{implementation of fees} would be equally hard to implement given the relevant impact they would have on the protocol. Since \textit{uncle blocks} requires multiple nodes to be rewarded by the discovery of a new block and the \textit{implementation of fees} would require fees to be imposed on messages. Hence, both solutions would lower the profit of not only miners but also users and would be highly vetted against by the Bitcoin community.
 
 However, there are still some approaches in Table \ref{fig:tabel2} that combined are able to cope with the multiple vulnerabilities while having a low impact on performance. Those approaches are the \textit{optimization in block propagation}, establishment of \textit{extra connections between nodes}, the use of \textit{MACHETE} to send messages through multiple paths, \textit{analysis of addr messagues} and the use of a \textit{LiFTinG approach} to cope with rational nodes. Although all these solutions combined will probably require more computational power from the nodes if we compare them with the approaches described before their impact is much lower.
 
@@ -107,7 +109,7 @@ Nesta secção propomos um conjunto de alterações ao mecanismo de propagação
 \item A rede Bitcoin não tem requisitos estritos de latência para a propagação das transações, uma vez que a taxa de geração de blocos é significativamente mais lenta que o processo de propagação epidémico (em média, é gerado um novo bloco a cada 10 minutos).
 \item Os mineiros são uma fracção reduzida do número total de nós. Apesar de ser fundamental que as transacções sejam conhecidas pelo mineiros, o protocolo de disseminação não distingue os mineiros dos restantes nós.
 \item No protocolo epidémico actualmente usado na Bitcoin, os anúncios são escalonados para serem propagados para todos os vizinhos que o nó conhece (cerca de 125).
-Este valor é substancialmente maior do que o valor teórico dos protocolos de disseminação epidêmicos que sugere que, mesmo na presença de faltas, basta propagar informação para um número de vizinhos que é aproximadamente logarítmico com o tamanho da rede~\cite{epidemicDiss}. Para o tamanho atual da rede, que possuí cerca de $10~000$ nós bastaria portanto propagar para $ ln(10~000) \approx 10$ vizinhos. 
+Este valor é substancialmente maior do que o valor teórico dos protocolos de disseminação epidêmicos que sugere que, mesmo na presença de faltas, basta propagar informação para um número de vizinhos que é aproximadamente logarítmico com o tamanho da rede~\cite{epidemicDiss}. Para o tamanho atual da rede, que possuí cerca de $10~000$ nós bastaria portanto propagar para $ ln(10~000) \approx 10$ vizinhos.
 \end{itemize}
 
 O principal desafio é reduzir a quantidade de anúncios redundantes trocada na rede e, ao mesmo tempo, assegurar que as transações chegam aos nós mineiros.
@@ -123,20 +125,20 @@ Note-se que a partir do momento em que uma transacção é incluída num bloco, 
 
 Como foi referido acima, a estratégia proposta para poupar largura de banda pressupõe que cada nó descobre quais os melhores caminhos para chegar aos mineiros mais próximos. Isto é conseguido seriando o vizinhos por um critério de proximidade aos mineiros. Os vizinhos mais perto dos mineiros ficam listados no topo da tabela e os mais afastados são seriados no fundo da tabela.
 
-Para obter esta classificação, cada nó mantém, para cada vizinho, três variáveis: \textit{n}, o número total de blocos que recebeu desse vizinho; \textit{k} a distância acumulada desses blocos até aos mineiros que o produziram; e finalmente \textit{a}, o número total de blocos recebidos.  
+Para obter esta classificação, cada nó mantém, para cada vizinho, três variáveis: \textit{n}, o número total de blocos que recebeu desse vizinho; \textit{k} a distância acumulada desses blocos até aos mineiros que o produziram; e finalmente \textit{a}, o número total de blocos recebidos.
 Para permitir actualizar \textit{k}, associamos ao processo de propagação de um novo bloco, um contador que regista quantos saltos o bloco deu na rede Bitcoin (este campo é incrementado sempre que um nó reencaminha o bloco). Com base nestas variáveis, a classificação dos vizinhos num determinado intervalo de tempo \textit{T} é feita de acordo com a seguinte fórmula (em que os valores de $k$, $a$ e $n$ são os acumulados no período $T$):
 
 \[ \mbox{class}^{T}= (\dfrac{k^{T}}{n^{T}} + a^{T}-n^{T}) \]
 
 Esta caracterização evita que nós com baixa capacidade de mineração que geram blocos muito esporadicamente, fiquem indefinidamente com uma boa classificação.
 %Isto é relevante pois uma percentagem dos blocos é gerada por nós com baixa capacidade de mineração, que queremos evitar  aleatórios assim, se enviássemos as nossas transações sempre para esses nós elas poderiam demorar muito tempo até aparecerem em blocos podendo até ficarem perdidas.
-Desta forma, balanceamos não só os vizinhos que têm melhor rácio distancia aos mineiros/número de blocos providenciados, mas também conseguimos ter em conta o número total de blocos que esse vizinho nos forneceu relativamente ao número total de blocos recebidos. 
+Desta forma, balanceamos não só os vizinhos que têm melhor rácio distancia aos mineiros/número de blocos providenciados, mas também conseguimos ter em conta o número total de blocos que esse vizinho nos forneceu relativamente ao número total de blocos recebidos.
 
-Uma vez que a classificação de cada um dos vizinhos se vai alterando ao longo do tempo, o valor usado para seriar os vizinhos é uma média deslizante da classificação instantânea acima referida, dada por: 
+Uma vez que a classificação de cada um dos vizinhos se vai alterando ao longo do tempo, o valor usado para seriar os vizinhos é uma média deslizante da classificação instantânea acima referida, dada por:
 
 \[ \mbox{class}^t = (1-\alpha) \cdot \mbox{class}^{t-1}  + \alpha \cdot \mbox{class}^{T} \]
 
-O factor $\alpha$ existe para evitar que vizinhos de  mineiros que já tenham sido extremamente activos no passado mas que no tempo actual já não o são, permanecem para sempre no topo da tabela. Nas nossas experiências usamos $\alpha=0.3$ e \textit{T} é configurado como sendo um intervalo de 4 horas. 
+O factor $\alpha$ existe para evitar que vizinhos de  mineiros que já tenham sido extremamente activos no passado mas que no tempo actual já não o são, permanecem para sempre no topo da tabela. Nas nossas experiências usamos $\alpha=0.3$ e \textit{T} é configurado como sendo um intervalo de 4 horas.
 
 Cada vez que um nó recebe um bloco de um vizinho, a classificação é atualizada conforme descrito no Algoritmo~\ref{alg:class}.
 %<++> os seguintes passos vão acontecer de forma a mantermos uma lista com os $m$ vizinhos com menor valor de classificação:
@@ -150,12 +152,12 @@ Cada vez que um nó recebe um bloco de um vizinho, a classificação é atualiza
   \If{$nova\_class =< no.class()$ \textbf{and} $pior\_class < no.class()$}
 	\State $\textit{pior\_class} \gets \textit{no.class()}$
     \State $\textit{pior\_no} \gets \textit{no}$
-    \EndIf	
+    \EndIf
 \EndFor
 \If{$pior\_class != -1$}
 	\State $\textit{m.remove}(pior\_no)$
     \State $\textit{m.append}(no\_a\_actualizar)$
-	\EndIf	
+	\EndIf
 \EndFunction
 \end{algorithmic}
 \caption{Computação dos \textit{m} melhores vizinhos}
@@ -168,10 +170,10 @@ Cada vez que um nó recebe um bloco de um vizinho, a classificação é atualiza
 
 \subsection{Propagação Enviesada}
 \label{sec:propagacao}
-Dado que o nosso objectivo é fazer com que as transações que conhecemos cheguem rapidamente aos mineiros podemos utilizar o mecanismo descrito na secção anterior para atingir este objectivo. Assim se estivéssemos perante uma rede onde todos os nós cumpriam com o protocolo e os caminhos fossem resilientes o suficiente poderíamos apenas enviar as transações que recebíamos para o nosso vizinho que tivesse menor valor de classificação e inevitavelmente essas transações seriam adicionadas a um bloco. 
+Dado que o nosso objectivo é fazer com que as transações que conhecemos cheguem rapidamente aos mineiros podemos utilizar o mecanismo descrito na secção anterior para atingir este objectivo. Assim se estivéssemos perante uma rede onde todos os nós cumpriam com o protocolo e os caminhos fossem resilientes o suficiente poderíamos apenas enviar as transações que recebíamos para o nosso vizinho que tivesse menor valor de classificação e inevitavelmente essas transações seriam adicionadas a um bloco.
 
 No entanto, para além das falhas por paragem, temos de ter em conta que os nós podem manipular o $k$ enviado aos seus vizinhos, colocando-o a zero.
-Deste modo seriam erradamente priorizados e poderiam ficar em vantagem de duas maneiras: conhecer as transações mais cedo, e não propagar as transações recebidas. 
+Deste modo seriam erradamente priorizados e poderiam ficar em vantagem de duas maneiras: conhecer as transações mais cedo, e não propagar as transações recebidas.
 Para evitar este problema, além de disseminarmos as transações para os vizinhos com mais prioridade, enviamos também para um conjunto aleatório de vizinhos, conforme descrito no Algoritmo~\ref{alg:diss}. Desta forma asseguramos que as transações continuam a ser disseminadas pelo resto da rede mesmo que tenhamos como vizinho um nó malicioso.
 %Desta forma sempre que um nó receber uma transação vai enviar esta para o conjunto de vizinhos com melhor classificação\textit{m} e vai concorrentemente enviar a transação para um conjunto de nós escolhidos ao acaso \textit{a} tal como descrito no algoritmo abaixo:
 
@@ -180,7 +182,7 @@ Para evitar este problema, além de disseminarmos as transações para os vizinh
 \Function{nos\_para\_enviar}{transacao}
 \If{$m$ \textbf{is not} $empty$ \textbf{or} $(pi == True$ \textbf{and} $transacao.criador() == mim)$}
 	\State {$\textbf{return}$ $todos\_vizinhos$}
-    \EndIf	
+    \EndIf
 \State $\textit{total} \gets \textit{tamanho\_m} + \textit{tamanho\_a}$
 \State $\textit{melhores\_nos} \gets \textit{m}$
 \If{$tamanho(todos\_vizinhos) < total$}
@@ -190,7 +192,7 @@ Para evitar este problema, além de disseminarmos as transações para os vizinh
     \EndIf
 \If{$total > 0$}
 	\State $\textit{nos\_aleatorios} \gets \textit{escolha\_aleatoria(todos\_vizinhos, tamanho\_a)}$
-    \EndIf	
+    \EndIf
 \State \Return melhores\_nos + nos\_aleatorios
 \EndFunction
 \end{algorithmic}
@@ -207,7 +209,7 @@ Na Secção~\ref{sec:calibracao} discutimos as diferentes configurações testad
 
 %O nosso objectivo de longo prazo é vir a incluir uma versão da nosso algoritmo na distribuição do Bitcoin. No entanto, esse processo é moroso e requer evidências das vantagens da solução. Não sendo exequível fazer experiências com milhares de nós num ambiente real com uma versão alterada do cliente Bitcoin, tivemos de recorrer a simulação para avaliar o nosso algoritmo.
 
-%Para criarmos uma simulador fiel ao cliente original, começámos por fazer alterações ao cliente da \textit{Bitcoin Core} (cliente mais usado) para recolhemos estatísticas em relação às mensagens trocadas pelos clientes que usam a distribuição por omissão. Desta forma alteramos o cliente para que este capturasse as seguintes informações: 
+%Para criarmos uma simulador fiel ao cliente original, começámos por fazer alterações ao cliente da \textit{Bitcoin Core} (cliente mais usado) para recolhemos estatísticas em relação às mensagens trocadas pelos clientes que usam a distribuição por omissão. Desta forma alteramos o cliente para que este capturasse as seguintes informações:
 %\begin{itemize}
 %\item anúncios de transações;
 %\item transações que recebidas;
@@ -223,7 +225,7 @@ Na Secção~\ref{sec:calibracao} discutimos as diferentes configurações testad
 %\begin{itemize}
 %\item No momento de criar uma transação, o nó de origem regista este evento um contador global que captura quantas transações já foram criadas no sistema, adiciona a transação à sua lista de transações conhecidas e coloca essa transação nas filas de anúncios a enviar aos seus vizinhos. Cada transação tem o tamanho de  700 bytes.
 %\item No momento de criar um bloco, um nó determina qual será o ciclo em que o cripto puzzle será resolvido. Após correr esta função vai buscar à sua lista de transações \textit{pendentes} transações até encher o bloco (1428 transações) ou ficar sem transações  \textit{pendentes}. Finalmente vai criar o bloco, adicioná-lo à sua lista de blocos e anunciá-lo aos seus vizinhos.
-%\item Cada nó mantém, para cada um dos seus vizinhos, uma lista de anúncios \textit{prontos} a enviar. Para enviar anúncios aos seus vizinhos, o nó começa por calcular, para cada vizinho, qual vai ser o próximo ciclo em que deve realizar a transmissão (a propagação dos anúncios é atrasada deliberadamente, para reduzir o tráfego de controlo). Quando esse instante chegar, retira um anúncio da lista de \textit{prontos}, verifica se o vizinho ainda não conhece esse anuncio e, caso ele não o conheça adiciona esse anuncio, a uma lista de anúncios a transmitir. Este processo é repetido até a lista de anúncios \textit{prontos} ficar vazia ou a lista de anúncios a enviar chegar ao tamanho limite de  35. No fim deste processo,  a lista de anúncios é enviada. 
+%\item Cada nó mantém, para cada um dos seus vizinhos, uma lista de anúncios \textit{prontos} a enviar. Para enviar anúncios aos seus vizinhos, o nó começa por calcular, para cada vizinho, qual vai ser o próximo ciclo em que deve realizar a transmissão (a propagação dos anúncios é atrasada deliberadamente, para reduzir o tráfego de controlo). Quando esse instante chegar, retira um anúncio da lista de \textit{prontos}, verifica se o vizinho ainda não conhece esse anuncio e, caso ele não o conheça adiciona esse anuncio, a uma lista de anúncios a transmitir. Este processo é repetido até a lista de anúncios \textit{prontos} ficar vazia ou a lista de anúncios a enviar chegar ao tamanho limite de  35. No fim deste processo,  a lista de anúncios é enviada.
 %\end{itemize}
 
 %No simulador,  concretizámos o funcionamento das principais mensagens trocadas por nós após terem estabelecido ligações, essas mensagens são mensagens \textsl{Inv, GetHeaders, Headers, GetData, Block, CmpctBlock, GetBlockTX, BlockTX} e \textsl{TX} . Vamos agora explicar o  comportamento de um nó quando recebe cada uma destas mensagens.
@@ -235,7 +237,7 @@ Na Secção~\ref{sec:calibracao} discutimos as diferentes configurações testad
 %\item Verifica se já possui a informação anunciada. Caso não a possua, vai adicionar essa informação a uma lista de informação a pedir.
 %\end{itemize}
 
-%No depois de ter iterado por todos os anúncios, o nó envia uma mensagem de \textsl{GetHeaders} caso o anúncio tenha sido de blocos e envia uma mensagem \textit{GetData} caso o anúncio tenha sido de transações. 
+%No depois de ter iterado por todos os anúncios, o nó envia uma mensagem de \textsl{GetHeaders} caso o anúncio tenha sido de blocos e envia uma mensagem \textit{GetData} caso o anúncio tenha sido de transações.
 
 %Quando um nó recebe uma mensagem de pedido de informação \textsl{GetData, GetHeaders}, vai atualizar o inventário do vizinho que lhe enviou a mensagem e vai responder com a informação requisitada.
 
@@ -243,7 +245,7 @@ Na Secção~\ref{sec:calibracao} discutimos as diferentes configurações testad
 
 %Quando um nó recebe uma mensagem de \textsl{TX}, vai atualizar o inventário do vizinho e seguidamente caso não possua a transação, adiciona-a à sua lista de transacções \textit{pendentes} e invoca uma função, designada por \textit{push\_to\_send}, para disseminar essa transação aos vizinhos que ainda não a possuem.
 
-%Quando um nó recebe um bloco compacto através de uma mensagem \textsl{CmpctBlock}, o nó verifica se já possui esse bloco e caso já o possua  atualiza apenas o inventário do vizinho que lhe enviou o bloco. Caso não possua o bloco, verifica se têm todas as transações presentes no bloco;  se não possuir uma ou mais transações requisita-as com uma mensagem de \textsl{GetBlockTX} e coloca o bloco numa lista de blocos parcialmente construidos. Assim que receber a resposta à mensagem de requisito de transações acaba de reconstruir o bloco e inicia o processamento do novo bloco. Quando um nó recebe um bloco completo através de uma mensagem \textsl{Block}, caso não o possua vai processá-lo. 
+%Quando um nó recebe um bloco compacto através de uma mensagem \textsl{CmpctBlock}, o nó verifica se já possui esse bloco e caso já o possua  atualiza apenas o inventário do vizinho que lhe enviou o bloco. Caso não possua o bloco, verifica se têm todas as transações presentes no bloco;  se não possuir uma ou mais transações requisita-as com uma mensagem de \textsl{GetBlockTX} e coloca o bloco numa lista de blocos parcialmente construidos. Assim que receber a resposta à mensagem de requisito de transações acaba de reconstruir o bloco e inicia o processamento do novo bloco. Quando um nó recebe um bloco completo através de uma mensagem \textsl{Block}, caso não o possua vai processá-lo.
 
 %O processamento de um bloco começa por atualizar o inventário de blocos. Caso o novo bloco seja posterior ao bloco mais recente que o nó conhece, atualiza-se o estado do livro razão dá-se inicio ao cálculo de um novo bloco. Por fim,  antes de se iniciar a disseminação do bloco,  removem-se as transações incluídas no bloco da lista de transações \textit{pendentes}. Durante a disseminação de um bloco, se o vizinho possuir o bloco anterior ao novo bloco então envia-se o novo bloco através de uma mensagem \textsl{CmpctBlock}; caso contrário envia-se uma mensagem de \textsl{Header}.
 

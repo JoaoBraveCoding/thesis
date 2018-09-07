@@ -1,4 +1,5 @@
 \chapter{Evaluation}
+\label{chap:evaluation}
 \section{Evaluation}
 \label{sec:evaluation}
 Given how adverse the Bitcoin community is to change once we evaluate our system we will have to take into account the following factors that are a priority for both Bitcoin users and miners.
@@ -6,22 +7,22 @@ Given how adverse the Bitcoin community is to change once we evaluate our system
 \begin{itemize}
 \item \textbf{Transaction and block latency} As it was described in the previous section, some of the approaches have an impact on the time it takes to disseminate transactions or blocks. So once we evaluate our system we will have to study if our system does not increase this latency time by a relevant amount. Otherwise, our system might induce more forks on the network which is not desirable.
 
-\item \textbf{Bandwith consumption} This factor is also important for two reasons: i) we want to preserve computational power and ii) we want our system to be scalable. 
+\item \textbf{Bandwith consumption} This factor is also important for two reasons: i) we want to preserve computational power and ii) we want our system to be scalable.
 
-We want to minimize the number of messages on the network to avoid nodes from wasting computational power processing irrelevant messages. Furthermore, with the growing number of Bitcoin users if our system was to put a big overweight on the network it would not scale well. 
+We want to minimize the number of messages on the network to avoid nodes from wasting computational power processing irrelevant messages. Furthermore, with the growing number of Bitcoin users if our system was to put a big overweight on the network it would not scale well.
 
 Some of our approaches will impose an extra overweight on the network so once we evaluate our system we will have to take into consideration that extra bandwidth and try to minimize it.
 
 \item \textbf{Resources consumption} This is one of the most important factors given the performance requirements imposed by the Bitcoin community. If our system was to downgrade the performance of Bitcoin without a worthy tradeoff our system would never be adopted. It is certain that with the implementation of our approaches the performance aspect of Bitcoin will be affected. So once we evaluate our system we will need to take this into consideration and balance out the performance degradation with the advantages our system brings.
 \end{itemize}
 
-Given the complexity of Bitcoin and its dimension we will start by using the Shadow simulator \cite{jansen2011shadow} to evaluate our system. We will use an incremental approach to test our system given the complex system that Bitcoin is. We will start by examining if each our approaches protect Bitcoin against their respective vulnerabilities. Then once we are sure that our strategies work as expected we will combine them together and once again evaluate their effectiveness and also measure the factors presented previously. 
+Given the complexity of Bitcoin and its dimension we will start by using the Shadow simulator \cite{jansen2011shadow} to evaluate our system. We will use an incremental approach to test our system given the complex system that Bitcoin is. We will start by examining if each our approaches protect Bitcoin against their respective vulnerabilities. Then once we are sure that our strategies work as expected we will combine them together and once again evaluate their effectiveness and also measure the factors presented previously.
 
 Our system should be tested with a workload that contains the same amount of transactions happening these days but the amount of messages should be proportional to the size of the emulated network, for instance, we are not going emulate a system with 10 nodes and 100K transactions.
 
 Finally, once we have a good understanding of the impact Bitshield has in Bitcoin we will generate, if there is still enough time until the deadline of the thesis, a working Bitcoin client ready to be deployed in the network.
 
-Para avaliar a abordagem proposta, construímos um simulador de eventos que modela a propagação de transações na rede Bitcoin (este simulador foi desenvolvido em Python). Decidimos implementar o nosso próprio simulador pois todos os outros que encontrámos não implementavam a versão mais actual do protocolo Bitcoin\footnote{Entre outros \url{https://github.com/shadow/shadow-plugin-bitcoin} e\\ \url{https://github.com/arthurgervais/Bitcoin-Simulator}}. 
+Para avaliar a abordagem proposta, construímos um simulador de eventos que modela a propagação de transações na rede Bitcoin (este simulador foi desenvolvido em Python). Decidimos implementar o nosso próprio simulador pois todos os outros que encontrámos não implementavam a versão mais actual do protocolo Bitcoin\footnote{Entre outros \url{https://github.com/shadow/shadow-plugin-bitcoin} e\\ \url{https://github.com/arthurgervais/Bitcoin-Simulator}}.
 
 \subsection{Calibração do Simulador}
 \label{sec:calibracao}
@@ -50,8 +51,8 @@ Os resultados apresentados são a média de 3 testes independentes e corresponde
 %e 16 \emph{pools} de mineiros cada uma com 3 \gateways em média quer com uma rede de 625 nós e 5 pools cada uma com 1 gateway. Assim todos os nossos testes foram realizados para uma duração equivalente a um dia em tempo real com a configuração para os 625 nós.
 %no mundo real o que significa 86400 ciclos no simulador.
 
- 
-%De forma a podermos correr múltiplas simulações de uma só vez escrevemos também um \textit{script} em Bash que nos permitia correr as diferentes experiências múltiplas vezes e até paralelamente caso o máquina em questão tivesse recursos suficientes para o fazer. 
+
+%De forma a podermos correr múltiplas simulações de uma só vez escrevemos também um \textit{script} em Bash que nos permitia correr as diferentes experiências múltiplas vezes e até paralelamente caso o máquina em questão tivesse recursos suficientes para o fazer.
 
 \subsection{Impacto da Propagação Enviesada}
 \label{sec:evalDiss}
@@ -65,9 +66,9 @@ Para ser mais fácil denominar as diferentes experiências realizadas usamos a s
 
 Inicialmente, testámos as combinações de $n={1,2,3,4}$ quer para \textsl{M} quer para \textsl{A}.
 Após este conjunto preliminar de experiências, observámos que os resultados para $n={3,4}$ eram praticamente indistinguíveis de $n={1,2}$, com a excepção do número de duplicados que permaneceu perto do obtido na Bitcoin original.
-Estes resultados suportam também as medições no cliente real, onde observámos um número médio de duplicados de $3.33$. 
+Estes resultados suportam também as medições no cliente real, onde observámos um número médio de duplicados de $3.33$.
 Deste modo, para o resto das experiências efectuadas, consideramos somente as combinações:
-%Inicialmente para que pudesse-mos  averiguar a eficácia da nossa solução começamos por correr um conjunto de experiências com n igual a 4, 3, 2, 1 quer para Top quer para Rand. 
+%Inicialmente para que pudesse-mos  averiguar a eficácia da nossa solução começamos por correr um conjunto de experiências com n igual a 4, 3, 2, 1 quer para Top quer para Rand.
 %
 %Dos resultados destas experiências pudemos concluir que os valores de n a 4 e 3 ainda eram muito elevados pois obtínhamos os mesmo resultados que com n igual a 2 e 1 só que tínhamos uma percentagem de mensagens de anúncios duplicadas ainda muito próxima à versão base. Desta forma decidimos correr os testes para as seguintes combinações:
 %\begin{itemize}
@@ -79,7 +80,7 @@ M1\_A0.
 %\end{itemize}
 %\textbf{MM: TODO: esta parte deveria esta na especificação acima.}
 Adicionalmente, para cada configuração variámos o valor da variável \textsl{pi}.
-%Após termos corrido algumas experiências tivemos a ideia de também adicionar um mecanismo a que chamámos \textit{Early push}, que consiste num nó quando cria uma transação em vez de enviar só para o Top e os Rand envia para todos os seus vizinhos. Assim as experiências que vamos observar têm as 5 diferentes combinações e para cada uma ainda mostramos os resultados com o \textit{Early push} ativado e desativado. 
+%Após termos corrido algumas experiências tivemos a ideia de também adicionar um mecanismo a que chamámos \textit{Early push}, que consiste num nó quando cria uma transação em vez de enviar só para o Top e os Rand envia para todos os seus vizinhos. Assim as experiências que vamos observar têm as 5 diferentes combinações e para cada uma ainda mostramos os resultados com o \textit{Early push} ativado e desativado.
 Nos dados apresentados abaixo descartámos também a primeira e a última hora de simulação de forma a podermos estudar o sistema em estado estável.
 \vspace{-0.7cm}
 
@@ -103,14 +104,14 @@ Nos dados apresentados abaixo descartámos também a primeira e a última hora d
 \vspace{-0.7cm}
 \end{figure}
 
-A Figura~\ref{fig:nb-blocks} apresenta, para cada configurações a quantidade de blocos que foi gerada ao longo da experiência, enquanto que a Figura~\ref{fig:tx-added} mostra a percentagem de transações que foram adicionadas aos blocos. 
+A Figura~\ref{fig:nb-blocks} apresenta, para cada configurações a quantidade de blocos que foi gerada ao longo da experiência, enquanto que a Figura~\ref{fig:tx-added} mostra a percentagem de transações que foram adicionadas aos blocos.
 %No eixo do x temos as diferentes configurações e no eixo do y temos a percentagem de transações adicionada.
 Para o cenário Bitcoin obtemos o número esperado de blocos num dia ($\approx 144$) bem como o número de transações incluídas nos blocos ($\approx 100\%$).
 Todas as configurações produzem aproximadamente o mesmo número de blocos, contudo para as configurações M2\_A0 e M1\_A0 nem todas as transações são incluídas nos blocos.
 Na prática isto quer dizer que nem todas as transações chegam a todos os mineiros, e ilustra a importância de manter a aleatoriedade da disseminação.
 
-%Ambas as figuras mostram que o nosso simulador é capaz de simular com alguma fidelidade a Bitcoin pois podemos observar na coluna do Bitcoin que quantidade de blocos gerados está bastante próximo dos seis blocos à hora e que todas as transações geradas durante a simulação foram incluídas em blocos. 
-Na Figura~\ref{fig:commit-time} estudamos o tempo médio desde que uma transação é criada até ser incluída num bloco. As linhas horizontais denotam o tempo médio para uma transação ser incluída num bloco no Bitcoin. 
+%Ambas as figuras mostram que o nosso simulador é capaz de simular com alguma fidelidade a Bitcoin pois podemos observar na coluna do Bitcoin que quantidade de blocos gerados está bastante próximo dos seis blocos à hora e que todas as transações geradas durante a simulação foram incluídas em blocos.
+Na Figura~\ref{fig:commit-time} estudamos o tempo médio desde que uma transação é criada até ser incluída num bloco. As linhas horizontais denotam o tempo médio para uma transação ser incluída num bloco no Bitcoin.
 %As linhas horizontais denotam o tempo médio de uma transação na coluna Bitcoin encontra-se dentro dos limites esperados.
 Mais uma vez, a aleatoriedade ajuda não só a a que as transações cheguem a todos os nós como também diminui consideravelmente o tempo necessário para as transações serem incluídas nos blocos.
 \vspace{-0.6cm}
@@ -119,7 +120,7 @@ Mais uma vez, a aleatoriedade ajuda não só a a que as transações cheguem a t
 \centering
 \includegraphics[width=0.8\textwidth]{plots/commit-time.pdf}
 \caption{Tempo médio que demora desde que uma transação é criada até ser incluída num bloco.}
-%Para as configurações em que nem todas as transações são incluídas, ignoramos essas transações.}	
+%Para as configurações em que nem todas as transações são incluídas, ignoramos essas transações.}
 \label{fig:commit-time}
 \vspace{-1.5cm}
 \end{figure}
@@ -171,6 +172,5 @@ Podemos observar que a poupança em quantidade de informação enviada não é t
 No entanto, na prática, processar essas mensagens desnecessariamente impõe um custo nos nós.
 %todos os nós vão ter sempre que acabar por receber as transações, desta forma só conseguimos poupar nos anúncios destas. No entanto entre as duas configurações de M1\_A1 podemos ver que com o push inicial a False vamos obter a maior poupança.
 
-Analisando estes resultados, é possível concluir que a configuração mais atrativa é M1\_A1 com \textsl{pi=F} pois obtém bons ganhos 
+Analisando estes resultados, é possível concluir que a configuração mais atrativa é M1\_A1 com \textsl{pi=F} pois obtém bons ganhos
 (redução da quantidade de mensagens em 40.5\% e  redução total da quantidade de informação enviada em 10.7\%) ao mesmo tempo que preserva as propriedades da Bitcoin original.
-
