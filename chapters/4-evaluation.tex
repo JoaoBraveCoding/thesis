@@ -89,14 +89,14 @@ Nos dados apresentados abaixo descartámos também a primeira e a última hora d
 %\begin{subfigure}{.45\textwidth}
 %  	\centering
 %	\includegraphics[width=1\textwidth]{plots/blocks-gen.pdf}
-\subfloat[Quantidade de blocos criados.]{\includegraphics[width=0.45\textwidth]{plots/blocks-gen.pdf}
+\subfloat[Quantidade de blocos criados.]{\includegraphics[width=0.45\textwidth]{plots/imp/blocks-gen.pdf}
 %	\caption{Quantidade de blocos criados}
 	\label{fig:nb-blocks}
 }
 %\end{subfigure}%
 %\begin{subfigure}{.5\textwidth}
 %	\centering
-\subfloat[Percentagem de transações adicionadas aos blocos.]{\includegraphics[width=.45\textwidth]{plots/tx-added.pdf}
+\subfloat[Percentagem de transações adicionadas aos blocos.]{\includegraphics[width=.45\textwidth]{plots/imp/tx-added.pdf}
 	\label{fig:tx-added}
 }
 \caption{Blocos criados e percentagem de transações adicionadas aos blocos nos diferentes cenários considerados.}
@@ -118,7 +118,7 @@ Mais uma vez, a aleatoriedade ajuda não só a a que as transações cheguem a t
 
 \begin{figure}
 \centering
-\includegraphics[width=0.8\textwidth]{plots/commit-time.pdf}
+\includegraphics[width=0.8\textwidth]{plots/imp/commit-time.pdf}
 \caption{Tempo médio que demora desde que uma transação é criada até ser incluída num bloco.}
 %Para as configurações em que nem todas as transações são incluídas, ignoramos essas transações.}
 \label{fig:commit-time}
@@ -129,7 +129,7 @@ Mais uma vez, a aleatoriedade ajuda não só a a que as transações cheguem a t
 
 \begin{figure}
 \centering
-\includegraphics[width=0.6\textwidth]{plots/cdf_commit_2000.pdf}
+\includegraphics[width=0.6\textwidth]{plots/imp/cdf_commit.pdf}
 \caption{Função de distribuição acumulada do tempo necessário para uma transação ser incluída num bloco.}
 %CDF do tempo de commit. Nesta figura não mostramos no eixo do \textsl{x} todas as configurações a atingir as 100\% transações adicionadas pois se o fizéssemos a figura tornar-se-ia ilegível.}
 \label{fig:cdf-commit}
@@ -146,13 +146,13 @@ Isto deve-se ao facto de a taxa de criação de blocos ser bastante reduzida fac
 \centering
 \begin{minipage}{.5\textwidth}
   	\centering
-  	\includegraphics[width=1\textwidth]{plots/msg-sent.pdf}
+  	\includegraphics[width=1\textwidth]{plots/imp/msg-sent.pdf}
 	\caption{Numero total de mensagens \\\hspace{\textwidth} enviadas.}
 	\label{fig:msg-sent}
 \end{minipage}%
 \begin{minipage}{.5\textwidth}
   	\centering
-  	\includegraphics[width=1\textwidth]{plots/mb-sent.pdf}
+  	\includegraphics[width=1\textwidth]{plots/imp/mb-sent.pdf}
 	\caption{Quantidade de informação \\\hspace{\textwidth} enviada.}
 	\label{fig:mb-sent}
 \end{minipage}

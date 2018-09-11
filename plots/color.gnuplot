@@ -16,7 +16,8 @@ set xlabel "Configuration"
 set grid y
 set xtics rotate by 45 right
 set key above horizontal width -4.5 maxrows 1
-
+path = 'gnuplotdata/base/over/'
+file = path.'results.dat'
 
 
 
@@ -27,9 +28,9 @@ set xtics ('Bitcoin' 1, 'M2-A2' 3, 'M2-A1' 5, 'M2-A0' 7, 'M1-A1' 9, 'M1-A0' 11) 
 set output "msg-sent.eps"
 
 plot\
-  'gnuplotdata/results.dat' every ::0::2 u ($1):($4) w boxes ls 1 fill noborder notitle,\
-  'gnuplotdata/results.dat' every ::3::11 u ($1-0.27684075):($4) w boxes ls 2 fill noborder title "Initial Push = True",\
-  'gnuplotdata/results.dat' every ::12::22 u ($1+0.27684075):($4) w boxes ls 3 fill noborder title "Initial Push = False",\
+  file every ::0::2 u ($1):($4) w boxes ls 1 fill noborder notitle,\
+  file every ::3::11 u ($1-0.27684075):($4) w boxes ls 2 fill noborder title "Initial Push = True",\
+  file every ::12::22 u ($1+0.27684075):($4) w boxes ls 3 fill noborder title "Initial Push = False",\
 
 !epstopdf msg-sent.eps
 !rm msg-sent.eps
@@ -39,9 +40,9 @@ set output "mb-sent.eps"
 set ylabel "Amount of information \n sent (%)"
 
 plot\
-  'gnuplotdata/results.dat' every ::0::2 u ($1):($5) w boxes ls 1 fill noborder notitle,\
-  'gnuplotdata/results.dat' every ::3::11 u ($1-0.27684075):($5) w boxes ls 2 fill noborder title "Initial Push = True",\
-  'gnuplotdata/results.dat' every ::12::22 u ($1+0.27684075):($5) w boxes ls 3 fill noborder title "Initial Push = False",\
+  file every ::0::2 u ($1):($5) w boxes ls 1 fill noborder notitle,\
+  file every ::3::11 u ($1-0.27684075):($5) w boxes ls 2 fill noborder title "Initial Push = True",\
+  file every ::12::22 u ($1+0.27684075):($5) w boxes ls 3 fill noborder title "Initial Push = False",\
 
 !epstopdf mb-sent.eps
 !rm mb-sent.eps
@@ -52,9 +53,9 @@ set output "tx-added.eps"
 set ylabel "Amount of transactoins \n added (%)"
 
 plot\
-  'gnuplotdata/results.dat' every ::0::2 u ($1):($6) w boxes ls 1 fill noborder notitle,\
-  'gnuplotdata/results.dat' every ::3::11 u ($1-0.27684075):($6) w boxes ls 2 fill noborder title "Initial Push = True",\
-  'gnuplotdata/results.dat' every ::12::22 u ($1+0.27684075):($6) w boxes ls 3 fill noborder title "Initial Push = False",\
+  file every ::0::2 u ($1):($6) w boxes ls 1 fill noborder notitle,\
+  file every ::3::11 u ($1-0.27684075):($6) w boxes ls 2 fill noborder title "Initial Push = True",\
+  file every ::12::22 u ($1+0.27684075):($6) w boxes ls 3 fill noborder title "Initial Push = False",\
 
 !epstopdf tx-added.eps
 !rm tx-added.eps
@@ -70,9 +71,9 @@ set label "Frequency of 6 blocks per hour" at 9.5 ,152 font "Helvetica, 15"
 
 
 plot\
-  'gnuplotdata/results.dat' every ::0::2 u ($1):($3) w boxes ls 1 fill noborder notitle,\
-  'gnuplotdata/results.dat' every ::3::11 u ($1-0.27684075):($3) w boxes ls 2 fill noborder title "Initial Push = True",\
-  'gnuplotdata/results.dat' every ::12::22 u ($1+0.27684075):($3) w boxes ls 3 fill noborder title "Initial Push= False",\
+  file every ::0::2 u ($1):($3) w boxes ls 1 fill noborder notitle,\
+  file every ::3::11 u ($1-0.27684075):($3) w boxes ls 2 fill noborder title "Initial Push = True",\
+  file every ::12::22 u ($1+0.27684075):($3) w boxes ls 3 fill noborder title "Initial Push= False",\
    144 ls 4 notitle
 
 
@@ -90,9 +91,9 @@ set label "Highest time" at 12,24 font "Helvetica, 12"
 set label "Lowest time" at 12,12 font "Helvetica, 12"
 
 plot\
-  'gnuplotdata/results.dat' every ::0::2 u ($1):($7) w boxes ls 1 fill noborder notitle,\
-  'gnuplotdata/results.dat' every ::3::11 u ($1-0.27684075):($7) w boxes ls 2 fill noborder title "Initial Push = True",\
-  'gnuplotdata/results.dat' every ::12::22 u ($1+0.27684075):($7) w boxes ls 3 fill noborder title "Initial Push = False",\
+  file every ::0::2 u ($1):($7) w boxes ls 1 fill noborder notitle,\
+  file every ::3::11 u ($1-0.27684075):($7) w boxes ls 2 fill noborder title "Initial Push = True",\
+  file every ::12::22 u ($1+0.27684075):($7) w boxes ls 3 fill noborder title "Initial Push = False",\
    18 ls 4 notitle,\
    5.883 ls 4 notitle
 
@@ -114,13 +115,13 @@ set grid y
 
 set output "cdf_commit.eps"
 
-plot "gnuplotdata/time_commited_CDF_Vanilla.gpData" using 2:1 title "Bitcoin" with line ls 1 lc "orange",\
-     "gnuplotdata/time_commited_CDF_T2R2PT.gpData" using 2:1 title "M2-A2-IpT" with line ls 2,\
-     "gnuplotdata/time_commited_CDF_T2R2PF.gpData" using 2:1 title "M2-A2-IpF" with line ls 3 lc "#7300e6",\
-     "gnuplotdata/time_commited_CDF_T2R1PT.gpData" using 2:1 title "M2-A1-IpT" with line ls 4 lc "#b3b300",\
-     "gnuplotdata/time_commited_CDF_T2R1PF.gpData" using 2:1 title "M2-A1-IpF" with line ls 5 lc "#009933",\
-     "gnuplotdata/time_commited_CDF_T1R1PT.gpData" using 2:1 title "M1-A1-IpT" with line ls 6 lc "#e60099",\
-     "gnuplotdata/time_commited_CDF_T1R1PF.gpData" using 2:1 title "M1-A1-IpF" with line ls 7,\
+plot path."time_commited_CDF_Vanilla.gpData" using 2:1 title "Bitcoin" with line ls 1 lc "orange",\
+     path."time_commited_CDF_T2R2PT.gpData" using 2:1 title "M2-A2-IpT" with line ls 2,\
+     path."time_commited_CDF_T2R2PF.gpData" using 2:1 title "M2-A2-IpF" with line ls 3 lc "#7300e6",\
+     path."time_commited_CDF_T2R1PT.gpData" using 2:1 title "M2-A1-IpT" with line ls 4 lc "#b3b300",\
+     path."time_commited_CDF_T2R1PF.gpData" using 2:1 title "M2-A1-IpF" with line ls 5 lc "#009933",\
+     path."time_commited_CDF_T1R1PT.gpData" using 2:1 title "M1-A1-IpT" with line ls 6 lc "#e60099",\
+     path."time_commited_CDF_T1R1PF.gpData" using 2:1 title "M1-A1-IpF" with line ls 7,\
 
 !epstopdf "cdf_commit.eps"
 !rm "cdf_commit.eps"

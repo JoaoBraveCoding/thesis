@@ -1,7 +1,12 @@
 \chapter{Bitshield}
 \label{chap:arc}
 
-\section{Neighbours ordering}
+
+\section{Information dissemination}
+
+\subsection{Neighbours ordering}
+\label{sec:propagacao}
+
 To solve the problem referenced in Section~\ref{} NAME takes advantage of asymmetries that already exists in the network. Namely the fact that the majority of blocks are mainly mined by mining pools with only a total of 11 (7.6\%) blocks mined in a day coming from unknown sources.
 
 With this information, the objective of NAME is to prioritize miners in the process of dissemination. To be able to do this the nodes have to discover the best path to the closest miners. Here the best path is the path that takes less time for the transactions of a node to reach a miner. We achieve this by ordering our neighbours by proximity to miners. Hence, the neighbours closest to miners will be on top of our ordering and the ones further away will be at the bottom.
@@ -19,6 +24,75 @@ The time it takes for a neighbour to relay a block until a node is given by the 
 
 \[ \mbox{class}^{T}= (\dfrac{k^{T}}{n^{T}} + a^{T} - n^{T} + \dfrac{y^{T}}{z^{T}}) \]
 
+With this classification, we prevent nodes that only generate a block once in a while from having a good classification eternally.
+
+This is important because as we have said, there is still a percentage of blocks being mined by random nodes, and if we would, for instance, send all our transactions to those nodes they would take a lot of time to appear in a block. Which is not desired, given that the average time it takes for a transaction to be accepted in Bitcoin nowadays is ten minutes.
+
+This way for a neighbour to have good classification it has to have a good ratio of time it takes to disseminate blocks/number of blocks we received from him, a good ratio of blocks received from him/blocks received and finally a good ratio of time it took for a transaction to be added to blocks if we sent it to him.
+
+Give that the classification of neighbours is prone to change over time, the actual value used to order neighbours is given by the following sliding average of the classification presented previously:
+
+\[ \mbox{class}^t = (1-\alpha) \cdot \mbox{class}^{t-1} + \alpha \cdot \mbox{class}^{T} \]
+
+The $\alpha$ factor exists to avoid nodes that once generated a lot of blocks but currently do not from having a good classification forever. In our experiments, we used an $\alpha=0.3$ and a \textit{T} configured to be an interval of four hours.
+
+Each time a node receives a block from a neighbour the classification of that neighbour will be updated using Algorithm~\ref{alg:class}
+
+\begin{algorithm}[t]
+\begin{algorithmic}[1]
+\Function{update\_nodes\_classificatoin}{node\_to\_update}
+\State $\textit{new\_class} \gets \textit{recalculate\_class}(node\_to\_update)$
+\State $\textit{worst\_class} \gets -1$
+\State $\textit{worst\_node} \gets None$
+\For{$node$ \textbf{in} $m$}
+  \If{$new\_class =< node.class()$ \textbf{and} $worst\_class < node.class()$}
+	\State $\textit{worst\_class} \gets \textit{node.class()}$
+    \State $\textit{worst\_node} \gets \textit{node}$
+    \EndIf
+\EndFor
+\If{$worst\_class != -1$}
+	\State $\textit{m.remove}(worst\_node)$
+    \State $\textit{m.append}(node\_to\_update)$
+	\EndIf
+\EndFunction
+\end{algorithmic}
+\caption{Best \textit{m} neighbours computation}
+\label{alg:class}
+\end{algorithm}
+\vspace{-0.5cm}
+
+\subsection{Skewed relay}
+\label{sec:sr}
+Give that our objective is that our transactions reach a miner as fast as possible we can use the mechanism described previously to do it. Hence, if all the nodes were to follow the protocol correctly, and the paths created by out solution were resilient enough we could send our transactions to only one node, and they would eventually appear in a block.
+
+However, even if we do not consider the problem of nodes disconnecting from the network, there is the problem of time it takes for a transaction to be committed. So to solve this problem, we will send our transactions not only to the \textit{m} best nodes but also to \textit{a} random nodes, as it is described in Algorithm~\ref{alg:diss}. This way we assure that our transactions are still broadcast through the rest of the network and will be committed in a timely manner.
+
+\begin{algorithm}[t]
+\begin{algorithmic}[1]
+\Function{nodes\_to\_send}{transaction}
+\If{$m$ \textbf{is not} $empty$ \textbf{or} $(pi == True$ \textbf{and} $transaction.source() == self)$}
+	\State {$\textbf{return}$ $neighbourhood$}
+    \EndIf
+\State $\textit{total} \gets \textit{size\_m} + \textit{size\_a}$
+\State $\textit{best\_nodes} \gets \textit{m}$
+\If{$size(neighbourhood) < total$}
+	\State $\textit{total} \gets \textit{size(neighbourhood)} - \textit{size\_m}$
+\Else
+	\State $\textit{total} \gets \textit{total} - \textit{size\_m}$
+    \EndIf
+\If{$total > 0$}
+	\State $\textit{random\_nodes} \gets \textit{random\_choise(neighbourhood, size\_a)}$
+    \EndIf
+\State \Return best\_nodes + random\_nodes
+\EndFunction
+\end{algorithmic}
+\caption{Nodes to send transactions advertisements computation}
+\label{alg:diss}
+\end{algorithm}
+
+The value of \acrshort{ip} indicates that if a transaction is generated by a node, the node has the option of either sending it for only \textit{m} plus \textit{a} or to all his neighbours.
+
+Hence we can then configure the following variables \textit{size\_m}, \textit{size\_a} and \textit{ip} to obtain different results in the information dissemination. In Chapter~\ref{chap:evaluation} we will dicuss diferent configurations tested.
 
 \section{Architecture}
 \label{sec:arc}
@@ -149,80 +223,38 @@ Note-se que a partir do momento em que uma transacção é incluída num bloco, 
 
 %\[ \mbox{class}^{T}= (\dfrac{k^{T}}{n^{T}} + a^{T}-n^{T}) \]
 
-Esta caracterização evita que nós com baixa capacidade de mineração que geram blocos muito esporadicamente, fiquem indefinidamente com uma boa classificação.
+%Esta caracterização evita que nós com baixa capacidade de mineração que geram blocos muito esporadicamente, fiquem indefinidamente com uma boa classificação.
 %Isto é relevante pois uma percentagem dos blocos é gerada por nós com baixa capacidade de mineração, que queremos evitar  aleatórios assim, se enviássemos as nossas transações sempre para esses nós elas poderiam demorar muito tempo até aparecerem em blocos podendo até ficarem perdidas.
-Desta forma, balanceamos não só os vizinhos que têm melhor rácio distancia aos mineiros/número de blocos providenciados, mas também conseguimos ter em conta o número total de blocos que esse vizinho nos forneceu relativamente ao número total de blocos recebidos.
+%Desta forma, balanceamos não só os vizinhos que têm melhor rácio distancia aos mineiros/número de blocos providenciados, mas também conseguimos ter em conta o número total de blocos que esse vizinho nos forneceu relativamente ao número total de blocos recebidos.
 
-Uma vez que a classificação de cada um dos vizinhos se vai alterando ao longo do tempo, o valor usado para seriar os vizinhos é uma média deslizante da classificação instantânea acima referida, dada por:
+%Uma vez que a classificação de cada um dos vizinhos se vai alterando ao longo do tempo, o valor usado para seriar os vizinhos é uma média deslizante da classificação instantânea acima referida, dada por:
 
-\[ \mbox{class}^t = (1-\alpha) \cdot \mbox{class}^{t-1}  + \alpha \cdot \mbox{class}^{T} \]
+%\[ \mbox{class}^t = (1-\alpha) \cdot \mbox{class}^{t-1}  + \alpha \cdot \mbox{class}^{T} \]
 
-O factor $\alpha$ existe para evitar que vizinhos de  mineiros que já tenham sido extremamente activos no passado mas que no tempo actual já não o são, permanecem para sempre no topo da tabela. Nas nossas experiências usamos $\alpha=0.3$ e \textit{T} é configurado como sendo um intervalo de 4 horas.
+%O factor $\alpha$ existe para evitar que vizinhos de  mineiros que já tenham sido extremamente activos no passado mas que no tempo actual já não o são, permanecem para sempre no topo da tabela. Nas nossas experiências usamos $\alpha=0.3$ e \textit{T} é configurado como sendo um intervalo de 4 horas.
 
-Cada vez que um nó recebe um bloco de um vizinho, a classificação é atualizada conforme descrito no Algoritmo~\ref{alg:class}.
+%Cada vez que um nó recebe um bloco de um vizinho, a classificação é atualizada conforme descrito no Algoritmo~\ref{alg:class}.
 %<++> os seguintes passos vão acontecer de forma a mantermos uma lista com os $m$ vizinhos com menor valor de classificação:
-\begin{algorithm}[t]
-\begin{algorithmic}[1]
-\Function{actualizar\_estatisticas\_no}{no\_a\_actualizar, saltos\_bloco}
-\State $\textit{nova\_class} \gets \textit{recalcular\_classificacao}(no\_a\_actualizar, saltos\_bloco)$
-\State $\textit{pior\_class} \gets -1$
-\State $\textit{pior\_no} \gets None$
-\For{$no$ \textbf{in} $m$}
-  \If{$nova\_class =< no.class()$ \textbf{and} $pior\_class < no.class()$}
-	\State $\textit{pior\_class} \gets \textit{no.class()}$
-    \State $\textit{pior\_no} \gets \textit{no}$
-    \EndIf
-\EndFor
-\If{$pior\_class != -1$}
-	\State $\textit{m.remove}(pior\_no)$
-    \State $\textit{m.append}(no\_a\_actualizar)$
-	\EndIf
-\EndFunction
-\end{algorithmic}
-\caption{Computação dos \textit{m} melhores vizinhos}
-\label{alg:class}
-\end{algorithm}
-\vspace{-0.5cm}
+
 
 
 %Na nossa solução, de forma a que um nó consiga determinar para qual dos seus vizinhos deve enviar transações vai somar o inteiro que indica o número de saltos que o bloco dá na rede a uma variável associada ao vizinho de quem recebeu o bloco. Esta variável vai ser depois dividida pelo número total de blocos recebidos através desse vizinho de modo a possamos associar um valor de proximidade ao mineiro a cada vizinho. Visto que o campo presente nas mensagem que propagam os blocos deve ser incrementado sempre que um nó envia o bloco para um dos seus vizinhos é evidente que os vizinhos com o menor valor de proximidade a mineiros vão ser os vizinhos que teoricamente estarão mais perto dos mineiros.
 
-\subsection{Propagação Enviesada}
-\label{sec:propagacao}
-Dado que o nosso objectivo é fazer com que as transações que conhecemos cheguem rapidamente aos mineiros podemos utilizar o mecanismo descrito na secção anterior para atingir este objectivo. Assim se estivéssemos perante uma rede onde todos os nós cumpriam com o protocolo e os caminhos fossem resilientes o suficiente poderíamos apenas enviar as transações que recebíamos para o nosso vizinho que tivesse menor valor de classificação e inevitavelmente essas transações seriam adicionadas a um bloco.
+%\subsection{Propagação Enviesada}
+%\label{sec:propagacao}
+%Dado que o nosso objectivo é fazer com que as transações que conhecemos cheguem rapidamente aos mineiros podemos utilizar o mecanismo descrito na secção anterior para atingir este objectivo. Assim se estivéssemos perante uma rede onde todos os nós cumpriam com o protocolo e os caminhos fossem resilientes o suficiente poderíamos apenas enviar as transações que recebíamos para o nosso vizinho que tivesse menor valor de classificação e inevitavelmente essas transações seriam adicionadas a um bloco.
 
-No entanto, para além das falhas por paragem, temos de ter em conta que os nós podem manipular o $k$ enviado aos seus vizinhos, colocando-o a zero.
-Deste modo seriam erradamente priorizados e poderiam ficar em vantagem de duas maneiras: conhecer as transações mais cedo, e não propagar as transações recebidas.
-Para evitar este problema, além de disseminarmos as transações para os vizinhos com mais prioridade, enviamos também para um conjunto aleatório de vizinhos, conforme descrito no Algoritmo~\ref{alg:diss}. Desta forma asseguramos que as transações continuam a ser disseminadas pelo resto da rede mesmo que tenhamos como vizinho um nó malicioso.
+%No entanto, para além das falhas por paragem, temos de ter em conta que os nós podem manipular o $k$ enviado aos seus vizinhos, colocando-o a zero.
+%Deste modo seriam erradamente priorizados e poderiam ficar em vantagem de duas maneiras: conhecer as transações mais cedo, e não propagar as transações recebidas.
+%ara evitar este problema, além de disseminarmos as transações para os vizinhos com mais prioridade, enviamos também para um conjunto aleatório de vizinhos, conforme descrito no Algoritmo~\ref{alg:diss}. Desta forma asseguramos que as transações continuam a ser disseminadas pelo resto da rede mesmo que tenhamos como vizinho um nó malicioso.
 %Desta forma sempre que um nó receber uma transação vai enviar esta para o conjunto de vizinhos com melhor classificação\textit{m} e vai concorrentemente enviar a transação para um conjunto de nós escolhidos ao acaso \textit{a} tal como descrito no algoritmo abaixo:
 
-\begin{algorithm}[t]
-\begin{algorithmic}[1]
-\Function{nos\_para\_enviar}{transacao}
-\If{$m$ \textbf{is not} $empty$ \textbf{or} $(pi == True$ \textbf{and} $transacao.criador() == mim)$}
-	\State {$\textbf{return}$ $todos\_vizinhos$}
-    \EndIf
-\State $\textit{total} \gets \textit{tamanho\_m} + \textit{tamanho\_a}$
-\State $\textit{melhores\_nos} \gets \textit{m}$
-\If{$tamanho(todos\_vizinhos) < total$}
-	\State $\textit{total} \gets \textit{tamanho(todos\_vizinhos)} - \textit{tamanho\_m}$
-\Else
-	\State $\textit{total} \gets \textit{total} - \textit{tamanho\_m}$
-    \EndIf
-\If{$total > 0$}
-	\State $\textit{nos\_aleatorios} \gets \textit{escolha\_aleatoria(todos\_vizinhos, tamanho\_a)}$
-    \EndIf
-\State \Return melhores\_nos + nos\_aleatorios
-\EndFunction
-\end{algorithmic}
-\caption{Computação dos nós para enviar anúncios de transações}
-\label{alg:diss}
-\end{algorithm}
 
-O valor de \textit{pi} (Push inicial) indica se quando uma transação é gerada deve ser enviada apenas para \textit{m} e \textit{a} ou para todos os vizinhos.
+
+%O valor de \textit{pi} (Push inicial) indica se quando uma transação é gerada deve ser enviada apenas para \textit{m} e \textit{a} ou para todos os vizinhos.
 %e \textit{a} enviar para todos os seus vizinhos.
-Desta forma os valores de \textit{tamanho\_m}, \textit{tamanho\_a} e \textit{pi} podem depois ser alterados para obtermos diferentes padrões de propagação.
-Na Secção~\ref{sec:calibracao} discutimos as diferentes configurações testadas.
+%Desta forma os valores de \textit{tamanho\_m}, \textit{tamanho\_a} e \textit{pi} podem depois ser alterados para obtermos diferentes padrões de propagação.
+%Na Secção~\ref{sec:calibracao} discutimos as diferentes configurações testadas.
 
 %\subsection{Concretização}
 
