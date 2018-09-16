@@ -1,7 +1,32 @@
 \chapter{Evaluation}
 \label{chap:evaluation}
-\section{Evaluation}
-\label{sec:evaluation}
+\section{Simulator tuning}
+\label{sec:sim_tuning}
+
+De modo a calibrar o simulador para ser o mais fiel possível ao protocolo original, extendemos o \textit{Bitcoin Core}, o cliente Bitcoin mais usado, para recolher métricas relativamente às mensagens trocadas pelos clientes.
+As métricas recolhidas são as seguintes: i) anúncios de transações; ii) transações recebidas; iii) transações presentes em blocos compactos que o nó não possuía e tinha de pedir de forma a poder reconstruir o bloco.
+Corremos duas instâncias deste cliente, em localizações físicas distintas durante um mês e usámos as métricas recolhidas para calibrar e validar o simulador.
+Além disso usámos a informação publicamente disponível em \url{https://blockchain.info/} para determinar o número de transações criadas por dia, a distribuição de blocos gerados por mineiro, e o tamanho médio de uma transação.
+Munidos destas métricas, implementámos o protocolo original no simulador, bem como as nossas modificações. Calibrámos experimentalmente o simulador de modo a que os resultados observados no Bitcoin fossem equivalentes às observações efetuadas no cliente real.
+O modelo de rede que usámos para as simulações foi composto apenas por nós que seguem o protocolo devidamente.
+
+%As simulações recorrem a simulador de eventos discreto, programado em Python,  que funciona por ciclos. Em cada ciclo os nós verificam se têm eventos para processar e, em caso afirmativo, executam o código que processa esse evento. Este código mimetiza o comportamento de um cliente Bitcoin (foram concretizadas duas versões, uma que tem o comportamento padrão e outra que corre as nossas modificações). Como resultado de processar um evento, um nó pode gerar novos eventos (que serão processados em ciclos futuros). Cada ciclo do simulador corresponde a um segundo de tempo real.
+
+%Para testar a nossa solução corremos o nosso simulador em diferentes maquinas para diferentes tamanhos de rede. Para realizar a maior partes dos testes usamos um computador pessoal com um Intel i5-4590 e 12GB de RAM usamos também para correr testes de maior dimensão uma maquina com um AMD Opteron 6272 e 32GB de RAM e outra maquina com um XX e 125GB de RAM.
+
+%Dados serem computacionalmente dispendiosas, as simulações foram corridas para diferentes tamanhos de rede mantendo o rácio de mineiros observado na data de realização das experiências, 6000 nós para 16 pools de mineiros cada uma com 3 gateways em média. Assim os diferentes tamanhos de rede testados foram: 625 nós com 5 mineiros, 1000 nós com 12 mineiros e 6000 nós com 48 mineiros todos para uma duração equivalente a um dia em tempo real.
+Devido às simulações serem computacionalmente dispendiosas e demorarem muito tempo a correr (na ordem dos dias) para redes grandes, fizemos testes preliminares para verificarmos se podíamos diminuir proporcionalmente o tamanho da rede e respectivas propriedades sem comprometer os resultados obtidos.
+Para este efeito, corremos o protocolo original com 6000 nós e com 625 nós e comparámos várias métricas, que discutiremos mais adiante.
+Os resultados obtidos foram equivalentes para ambos os tamanhos de rede pelo que, no resto desta secção consideramos uma rede de 625 nós.
+Este escalonamento proporcional entre 6000 nós (tamanho de rede registado quando começamos as experiências) e 625 nós permitiu-nos explorar mais rapidamente o espaço de soluções e correr várias instâncias de cada teste.
+Os resultados apresentados são a média de 3 testes independentes e correspondem a 24 horas de tempo real.
+
+%e 16 \emph{pools} de mineiros cada uma com 3 \gateways em média quer com uma rede de 625 nós e 5 pools cada uma com 1 gateway. Assim todos os nossos testes foram realizados para uma duração equivalente a um dia em tempo real com a configuração para os 625 nós.
+%no mundo real o que significa 86400 ciclos no simulador.
+
+
+%De forma a podermos correr múltiplas simulações de uma só vez escrevemos também um \textit{script} em Bash que nos permitia correr as diferentes experiências múltiplas vezes e até paralelamente caso o máquina em questão tivesse recursos suficientes para o fazer.
+
 Given how adverse the Bitcoin community is to change once we evaluate our system we will have to take into account the following factors that are a priority for both Bitcoin users and miners.
 
 \begin{itemize}
@@ -24,38 +49,8 @@ Finally, once we have a good understanding of the impact Bitshield has in Bitcoi
 
 Para avaliar a abordagem proposta, construímos um simulador de eventos que modela a propagação de transações na rede Bitcoin (este simulador foi desenvolvido em Python). Decidimos implementar o nosso próprio simulador pois todos os outros que encontrámos não implementavam a versão mais actual do protocolo Bitcoin\footnote{Entre outros \url{https://github.com/shadow/shadow-plugin-bitcoin} e\\ \url{https://github.com/arthurgervais/Bitcoin-Simulator}}.
 
-\subsection{Calibração do Simulador}
-\label{sec:calibracao}
-De modo a calibrar o simulador para ser o mais fiel possível ao protocolo original, extendemos o \textit{Bitcoin Core}, o cliente Bitcoin mais usado, para recolher métricas relativamente às mensagens trocadas pelos clientes.
-As métricas recolhidas são as seguintes: i) anúncios de transações; ii) transações recebidas; iii) transações presentes em blocos compactos que o nó não possuía e tinha de pedir de forma a poder reconstruir o bloco.
-Corremos duas instâncias deste cliente, em localizações físicas distintas durante um mês e usámos as métricas recolhidas para calibrar e validar o simulador.
-Além disso usámos a informação publicamente disponível em \url{https://blockchain.info/} para determinar o número de transações criadas por dia, a distribuição de blocos gerados por mineiro, e o tamanho médio de uma transação.
-Munidos destas métricas, implementámos o protocolo original no simulador, bem como as nossas modificações. Calibrámos experimentalmente o simulador de modo a que os resultados observados no Bitcoin fossem equivalentes às observações efetuadas no cliente real.
-O modelo de rede que usámos para as simulações foi composto apenas por nós que seguem o protocolo devidamente.
 
-%As simulações recorrem a simulador de eventos discreto, programado em Python,  que funciona por ciclos. Em cada ciclo os nós verificam se têm eventos para processar e, em caso afirmativo, executam o código que processa esse evento. Este código mimetiza o comportamento de um cliente Bitcoin (foram concretizadas duas versões, uma que tem o comportamento padrão e outra que corre as nossas modificações). Como resultado de processar um evento, um nó pode gerar novos eventos (que serão processados em ciclos futuros). Cada ciclo do simulador corresponde a um segundo de tempo real.
-
-
-
-
-%Para testar a nossa solução corremos o nosso simulador em diferentes maquinas para diferentes tamanhos de rede. Para realizar a maior partes dos testes usamos um computador pessoal com um Intel i5-4590 e 12GB de RAM usamos também para correr testes de maior dimensão uma maquina com um AMD Opteron 6272 e 32GB de RAM e outra maquina com um XX e 125GB de RAM.
-
-
-%Dados serem computacionalmente dispendiosas, as simulações foram corridas para diferentes tamanhos de rede mantendo o rácio de mineiros observado na data de realização das experiências, 6000 nós para 16 pools de mineiros cada uma com 3 gateways em média. Assim os diferentes tamanhos de rede testados foram: 625 nós com 5 mineiros, 1000 nós com 12 mineiros e 6000 nós com 48 mineiros todos para uma duração equivalente a um dia em tempo real.
-Devido às simulações serem computacionalmente dispendiosas e demorarem muito tempo a correr (na ordem dos dias) para redes grandes, fizemos testes preliminares para verificarmos se podíamos diminuir proporcionalmente o tamanho da rede e respectivas propriedades sem comprometer os resultados obtidos.
-Para este efeito, corremos o protocolo original com 6000 nós e com 625 nós e comparámos várias métricas, que discutiremos mais adiante.
-Os resultados obtidos foram equivalentes para ambos os tamanhos de rede pelo que, no resto desta secção consideramos uma rede de 625 nós.
-Este escalonamento proporcional entre 6000 nós (tamanho de rede registado quando começamos as experiências) e 625 nós permitiu-nos explorar mais rapidamente o espaço de soluções e correr várias instâncias de cada teste.
-Os resultados apresentados são a média de 3 testes independentes e correspondem a 24 horas de tempo real.
-
-%e 16 \emph{pools} de mineiros cada uma com 3 \gateways em média quer com uma rede de 625 nós e 5 pools cada uma com 1 gateway. Assim todos os nossos testes foram realizados para uma duração equivalente a um dia em tempo real com a configuração para os 625 nós.
-%no mundo real o que significa 86400 ciclos no simulador.
-
-
-%De forma a podermos correr múltiplas simulações de uma só vez escrevemos também um \textit{script} em Bash que nos permitia correr as diferentes experiências múltiplas vezes e até paralelamente caso o máquina em questão tivesse recursos suficientes para o fazer.
-
-\subsection{Impacto da Propagação Enviesada}
-\label{sec:evalDiss}
+\section{Results}
 Começámos por explorar o espaço de soluções à procura de compromissos que nos permitam reduzir o consumo de recursos de rede sem ter um impacto negativo nas propriedades dos sistema.
 Para ser mais fácil denominar as diferentes experiências realizadas usamos a seguinte notação: \textsl{Mn}, em que n especifica o valor da variável \textsl{tamanho\_m} ; e \textsl{An}, em que n especifica o tamanho da variável \textsl{tamanho\_a} conforme especificado no Algoritmo~\ref{alg:diss}.
 
@@ -172,5 +167,6 @@ Podemos observar que a poupança em quantidade de informação enviada não é t
 No entanto, na prática, processar essas mensagens desnecessariamente impõe um custo nos nós.
 %todos os nós vão ter sempre que acabar por receber as transações, desta forma só conseguimos poupar nos anúncios destas. No entanto entre as duas configurações de M1\_A1 podemos ver que com o push inicial a False vamos obter a maior poupança.
 
+\section{Discussion}
 Analisando estes resultados, é possível concluir que a configuração mais atrativa é M1\_A1 com \textsl{pi=F} pois obtém bons ganhos
 (redução da quantidade de mensagens em 40.5\% e  redução total da quantidade de informação enviada em 10.7\%) ao mesmo tempo que preserva as propriedades da Bitcoin original.

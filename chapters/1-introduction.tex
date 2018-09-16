@@ -1,45 +1,53 @@
 \chapter{Introduction}
+\label{chap:intro}
 Cryptocurrencies like Bitcoin and others gained a lot of exposure in the previous year, which has led to their popularization with an increase in average daily users. As a consequence of this increase, there has also been an increase in the resources spent by cryptocurrencies.
 
 This thesis addresses two problems, the immense amount of resources spent on disseminating information and BLANK (MEMBERSHIP). In particular, we propose a new algorithm for the dissemination of transactions as well as an improvement in the current BLANK (MEMBERSHIP)
 \section{Motivation}
+\label{sec:motivation}
+
 Cryptocurrencies and their associated mechanisms have gained an increasing relevance in recent years. For instance, at the time of this writing, Bitcoin (the most widely used cryptocurrency) has peaked at a trading value of more than 20K USD and the Bitcoin network processed more than 250K transactions per day\footnote{Taken from \url{https://blockchain.info/charts}.}. Moreover, the main technology behind Bitcoin, the Blockchain, has emerged as useful for a myriad of other applications, from birth, wedding, and death certificates to the monetization of music\footnote{Taken from \url{https://blockgeeks.com/guides/blockchain-applications/}}.
 
-For instance in Bitcoin, in an attack known as the partition attack,  an Autonomous System (AS) can isolate a partition of the network to make it vulnerable to double spending (see~\cite{apostolaki2016hijacking}).
+For instance in Bitcoin, in an attack known as the partition attack,  an \acrlong{as} can isolate a partition of the network to make it vulnerable to double spending (see~\cite{apostolaki2016hijacking}).
 Attacks such as this are increasingly more appealing due to the significant financial advantage that an attacker can gain, if successful.
 It is therefore of the utmost importance to the future of cryptocurrencies to design mechanisms that eliminate, or at least mitigate the possibility of such attacks without sacrificing other important aspects of cryptocurrencies.
 
 We are particularly interested in studying the protocols that support information dissemination in blockchain networks, and their vulnerabilities, as these are the backbone that allows cryptocurrencies to function properly.
-Even though cryptocurrencies have attracted lots of attention from the community on higher level subjects such as the consensus protocol used, few works explore the subject of information dissemination~\cite{miller2015discovering, heilman2015eclipse, bojja2017dandelion, owenson2017proximity}.
+Even though cryptocurrencies have attracted lots of attention from the community on higher level subjects such as the consensus protocol used, few works explore the subject of information dissemination~\cite{miller2015discovering};~\cite{heilman2015eclipse};~\cite{bojja2017dandelion};~\cite{owenson2017proximity}.
 %Strikingly, the few that do, show that information dissemination in cryptocurrencies is brittle and can have a severe impact on the system~\cite{miller2015discovering}.
 
-\todo{Check from here}
-In this work, we aim to address this problem by: i) doing a principled analysis of information dissemination vulnerabilities in the Bitcoin network and ii) proposing an extensible architecture that eliminates or mitigates these vulnerabilities.
+Another problem with the literature developed in this field is that most of these technologies are open source. Given that in an open source architeture patches are usually introduced frequently which leads to previous work quickly becoming outdated.
+Furthermore, the documentation of these open source projects that currently exists is either outdated or is very basic and does not properly explains how the system works.
+This makes it difficult for new developers/researchers when they want to understand and work with the system so that they are able to propose changes in order to improve it.
+
+In this thesis, to address this problem we began by: i) doing a principled analysis of information dissemination vulnerabilities in the Bitcoin network then ii) we validated the information discovered by studing the source code after iii) we proposed an extensible architecture that eliminates or mitigates these vulnerabilities and finally iv) we built a tool to conduct a series of experiments to evaluate our proposed architecture.
 We consider attackers with varying resources, from a rogue Autonomous System to a set of colluding individuals that target a specific victim, and different motivations in the system.
 To address these, we look at techniques that have been proposed in distributed systems literature such as overlay networks~\cite{jesi2009secure} or node behaviour~\cite{li2006bar}.
 
-Leveraging these techniques, we propose BitShield, an extensible architecture that aims to harden information propagation in cryptocurrency networks. More precisely, we focus on Bitcoin, but as we will see later the approach can be applied to other cryptocurrencies as well. The reason for choosing Bitcoin is that it is the most popular cryptocurrency and its core design is shared by many other cryptocurrencies, hence improvements over Bitcoin could be easily applied in other systems.
+Leveraging these techniques, we present BitShield, an extensible architecture that aims to improve the information propagation in cryptocurrency networks. More precisely, we focus on Bitcoin, but as we will see later the approach can be applied to other cryptocurrencies as well. The reason for choosing Bitcoin is that it is the most popular cryptocurrency and its core design is shared by many other cryptocurrencies, hence improvements over Bitcoin could be easily applied in other systems.
 
-A maioria das criptomodedas existentes, e em particular a \emph{Bitcoin} (a criptomoeda mais usada correntemente), mantêm um livro-razão descentralizado que regista a sequência ordenada de todas as transacções executadas no sistema~\cite{nakamoto2008bitcoin}.
-A manutenção de um livro-razão de forma descentralizada e aberta tem vindo a ser reconhecida como uma abstracção útil para várias aplicações, para além do uso original como meio de pagamento.
-Por exemplo,  livros-razão distribuídos podem ser usados para  registar todo o tipo de transacções, contratos, ou outros actos que tipicamente requerem o uso de notários.\footnote{Para uma lista de exemplos, consultar \url{https://blockgeeks.com/guides/blockchain-applications/}}
+%A maioria das criptomodedas existentes, e em particular a \emph{Bitcoin} (a criptomoeda mais usada correntemente), mantêm um livro-razão descentralizado que regista a sequência ordenada de todas as transacções executadas no sistema~\cite{nakamoto2008bitcoin}.
+%A manutenção de um livro-razão de forma descentralizada e aberta tem vindo a ser reconhecida como uma abstracção útil para várias aplicações, para além do uso original como meio de pagamento.
+%Por exemplo,  livros-razão distribuídos podem ser usados para  registar todo o tipo de transacções, contratos, ou outros actos que tipicamente requerem o uso de notários.\footnote{Para uma lista de exemplos, consultar \url{https://blockgeeks.com/guides/blockchain-applications/}}
 
-Um livro-razão distribuído é tipicamente mantido da seguinte forma. Em primeiro lugar, e por razões de eficiência, agrupam-se várias operações que são registadas em conjunto; estes grupos de transações são designadas por \emph{blocos}. Posteriormente, os blocos são organizados numa lista ligada, também designada por \emph{cadeia}.  Na literatura anglo-saxónica, esta cadeira de blocos é simplesmente designada por \emph{blockchain}.
+%Um livro-razão distribuído é tipicamente mantido da seguinte forma. Em primeiro lugar, e por razões de eficiência, agrupam-se várias operações que são registadas em conjunto; estes grupos de transações são designadas por \emph{blocos}. Posteriormente, os blocos são organizados numa lista ligada, também designada por \emph{cadeia}.  Na literatura anglo-saxónica, esta cadeira de blocos é simplesmente designada por \emph{blockchain}.
 %Na maioria dos sistemas, em particular nos sistemas de criptomoeda, a criação dos blocos, e a sua interligação numa cadeia é realizada de forma cooperativa por vários nós.
-Um dos aspectos interessantes de criptomoedas como o Bitcoin consiste no facto dos nós participantes terem um mecanismo de filiação aberto e descentralizado. Isto é, nenhum nó no sistema necessita de conhecer todos os outros nós do sistema e qualquer nó pode juntar-se ou sair do sistema que o protocolo garante a coerência da cadeia gerada mesmo que alguns nós possam ter um comportamento racional ou bizantino.
+%Um dos aspectos interessantes de criptomoedas como o Bitcoin consiste no facto dos nós participantes terem um mecanismo de filiação aberto e descentralizado. Isto é, nenhum nó no sistema necessita de conhecer todos os outros nós do sistema e qualquer nó pode juntar-se ou sair do sistema que o protocolo garante a coerência da cadeia gerada mesmo que alguns nós possam ter um comportamento racional ou bizantino.
 
-Tipicamente, os sistemas de manutenção de cadeias de blocos funcionam da seguinte forma. Os nós do sistema, concorrentemente, recebem transacções que posteriormente distribuem pelos restantes nós. De forma também concorrente, os nós tentam criar o próximo bloco da cadeia, o que envolve a resolução de um puzzle criptográfico computacionalmente exigente.
+%Tipicamente, os sistemas de manutenção de cadeias de blocos funcionam da seguinte forma. Os nós do sistema, concorrentemente, recebem transacções que posteriormente distribuem pelos restantes nós. De forma também concorrente, os nós tentam criar o próximo bloco da cadeia, o que envolve a resolução de um puzzle criptográfico computacionalmente exigente.
 %Isto tem duas vantagens.
 %Em primeiro lugar, desencoraja a criação de blocos incluindo transacções inválidas, uma vez que a única forma de um nó ser compensado pela energia gasta na resolução do puzzle é através da aceitação do seu bloco na cadeia.
 %Para além disso, a dificuldade do puzzle reduz a probabilidade de dois nós gerarem blocos simultaneamente, o que limita a ocorrência de bifurcações na cadeia.
-Assim que um nó gera um bloco, distribuí-o pela rede, o que leva ao cancelamento da geração de blocos concorrentes e dá inicio à criação de um novo bloco. Antes de aceitarem (e re-distribuirem) um novo bloco, os nós da rede validam que o bloco é bem formado e constituído por transacções válidas.
+%Assim que um nó gera um bloco, distribuí-o pela rede, o que leva ao cancelamento da geração de blocos concorrentes e dá inicio à criação de um novo bloco. Antes de aceitarem (e re-distribuirem) um novo bloco, os nós da rede validam que o bloco é bem formado e constituído por transacções válidas.
 
-Pela breve descrição acima, é fácil depreender que o processo de propagação de transacções é central na operação dos livro-razão distribuídos. Em primeiro lugar, as transacções necessitam de chegar aos nós que estão a criar blocos, de modo a poderem ser inseridas na cadeia. Em segundo lugar, necessitam também de ser conhecidas pelo restantes nós, pois são necessárias para validar a correcção dos blocos gerados. Na \emph{Bitcoin}, a propagação de transacções baseia-se numa estratégia em que os nós anunciam periodicamente aos vizinhos quais as transacções que possuem. Estes, após receberem anúncios de transações em falta solicitam-nas aos primeiros.
-Este processo gera uma redundância de mensagens de anúncios.
-Apesar desta redundância ser necessária para tolerância a faltas, experimentalmente observámos que cada nó recebe um número excessivo de anúncios duplicados para cada transação no sistema.
+%Pela breve descrição acima, é fácil depreender que o processo de propagação de transacções é central na operação dos livro-razão distribuídos. Em primeiro lugar, as transacções necessitam de chegar aos nós que estão a criar blocos, de modo a poderem ser inseridas na cadeia. Em segundo lugar, necessitam também de ser conhecidas pelo restantes nós, pois são necessárias para validar a correcção dos blocos gerados. Na \emph{Bitcoin}, a propagação de transacções baseia-se numa estratégia em que os nós anunciam periodicamente aos vizinhos quais as transacções que possuem. Estes, após receberem anúncios de transações em falta solicitam-nas aos primeiros.
+%Este processo gera uma redundância de mensagens de anúncios.
+%Apesar desta redundância ser necessária para tolerância a faltas, experimentalmente observámos que cada nó recebe um número excessivo de anúncios duplicados para cada transação no sistema.
 %verificámos que um nó recebe, por cada transacção, $n$ anúncios (quando bastaria receber um único para garantir a propagação da transacção).
 
 \section{Contributions}
+\label{chap:contributions}
+
 This thesis contributes with an updated description of how the Bitcoin protocol disseminates information and builds its network. It also introduces  two improvements over the current version of Bitcoin and alike Blockchain technologies:
 \begin{itemize}
 \item An amendment to the dissemination mechanism able to reduce the amount of bandwidth spent and the number of messages sent without compromising the resilience of the current system;
@@ -70,15 +78,19 @@ Finally, it also details the implementation of a simulator where we evaluated ou
 %\end{quotation}
 
 \section{Results}
+\label{chap:results}
+
 The results produced by this thesis can be enumerated as follows:
 \begin{itemize}
   \item A specification for a new dissemination protocol
   \item A specification for a new membership system
   \item Implementation of the proposed improvements
-  \item Experimental evaluation of the proposed systems
+  \item Experimental evaluation of the proposed improvements
 \end{itemize}
 
 \section{Structure of the Document}
+\label{chap:sotd}
+
 The remaining of this document is organized as follows. Chapter~\ref{chap:rw} provides an introduction to Bitcoin and its systems for information dissemination and membership protocol, it also covers some attacks to the cryptocurrency and problems related with \acrlong{p2p} systems. Chapter~\ref{chap:arc} describes the assumed network structure and characteristics and then describes the proposed improvements implemented. Chapter~\ref{chap:evaluation} presents the results of the experimental evaluation of BitShield's improvements. Lastly, Chapter~\ref{chap:conclusions} concludes the document by summarizing its main points and discussing future work planned.
 
 
