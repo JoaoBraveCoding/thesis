@@ -1,18 +1,9 @@
 \chapter{Conclusions}
 \label{chap:conclusions}
-Bitcoin and blockchain today still have a lot of vulnerabilities regarding network protocols. In spite of all the research being made in this field, few people have looked at the networks used by these technologies to disseminate information. This is an important aspect to look at because as we show in this report there are multiple vulnerabilities in these networks that allow attackers to exploit systems like Bitcoin that use them.
+Despite the multiple iterations and improvements  that have been done to the Bitcoin dissemination protocol since its introduction, there are still  some aspects that need to be improved.
+As Bitcoin becomes more popular and new clients join the system, it is fundamental to have an efficient and robust dissemination substrate for the network to function properly.
+%Given the current size of the network and the introduction of new clients to the system is of utmost importance that the new systems are efficient without hurting the resilience of the system.
+In this paper, we took some steps in this direction by improving the existing algorithm to do a more selective dissemination.
+Our improvements allow to save, 10.2\% of the current bandwidth used and 41.5\% of the number of messages exchanged without compromising the robustness of the current approach.
 
-In this report, we surveyed other cryptocurrencies that use these networks to compare them with Bitcoin. We discovered that although some cryptocurrencies have implemented solutions to these vulnerabilities is at the cost of other factors like performance and privacy.
-
-Some of the vulnerabilities that we studied vary from attacks done by AS to delay attacks performed by a singular attacker. We also cover some undesirable behaviours that nodes inside the network might have like \textit{selfish mining}.
-
-After, we compare multiple approaches to protect Bitcoin against the identified vulnerabilities by identifying the advantages and disadvantages of each one. Finally, we propose a set of extensions that have the purpose of helping Bitcoin overcome these threats.
-
-In the end, we identify relevant factors that we must take into account when evaluating our solution in order for it to be accepted by the Bitcoin community.
-
-Apesar do protocolo de disseminação da Bitcoin ter sofrido várias iterações e melhorias desde que o sistema foi originalmente introduzido, ainda existem hoje em dia várias ineficiências.
-Dado o tamanho da rede, e a cada vez maior adoção deste tipo de sistemas, torna-se imperioso construir sistemas cada vez mais eficientes, sem comprometer a sua correção e robustez.
-Neste artigo propusemos várias melhorias ao algoritmo de disseminação que obtêm reduções da largura de banda na ordem dos 10.7\% e uma redução no número de mensagens trocadas na ordem dos 40.5\%.
-
-Como trabalho futuro, tencionamos estudar mais aprofundadamente o espaço de soluções à procura de combinações que permitam melhorar os resultados obtidos, bem como enriquecer o modelo de faltas dos nós maliciosos.
-Adicionalmente, pretendemos estudar em que medida o sistema de filiação pode ser enriquecido com a informação recolhida de modo a permitir construir soluções mais eficientes.
+As future work, we plan to leverage more detailed membership information to build more efficient dissemination paths.
