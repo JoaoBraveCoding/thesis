@@ -144,11 +144,11 @@ reset
 set key right top
 set ylabel "Average commit time (minutes)"
 set xlabel "Time (hours)"
-set xrange [1:24]
+set xrange [1:48]
 set yrange [0:50]
 load "styles.inc"
 set grid y
-set xtics ('5' 5, '10' 10, '12' 12, '15' 15, '20' 20)
+set xtics ('5' 5, '10' 10, '12' 12, '15' 15, '20' 20, '25' 25, '30' 30, '35' 35, '40' 40, '45' 45)
 
 
 set label "Highest time" at 5,35 font "Helvetica, 12"

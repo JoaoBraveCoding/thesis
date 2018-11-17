@@ -1,9 +1,32 @@
 \chapter{Conclusions}
 \label{chap:conclusions}
-Despite the multiple iterations and improvements  that have been done to the Bitcoin dissemination protocol since its introduction, there are still  some aspects that need to be improved.
+Despite the multiple iterations and improvements  that have been done to the Bitcoin dissemination protocol since its introduction, there are still some aspects that need to be improved.
 As Bitcoin becomes more popular and new clients join the system, it is fundamental to have an efficient and robust dissemination substrate for the network to function properly.
-%Given the current size of the network and the introduction of new clients to the system is of utmost importance that the new systems are efficient without hurting the resilience of the system.
-In this paper, we took some steps in this direction by improving the existing algorithm to do a more selective dissemination.
-Our improvements allow to save, 10.2\% of the current bandwidth used and 41.5\% of the number of messages exchanged without compromising the robustness of the current approach.
+In this thesis, we addressed the problem of resources usage in the dissemination process.
 
-As future work, we plan to leverage more detailed membership information to build more efficient dissemination paths.
+%, as this not only deteriorates the Bitcoin network but also hinders the process of mining as more resources have to be spent in the processing of these messages.
+
+We proposed a novel protocol that improves the existing transaction dissemination algorithm, that bias the dissemination to the neighbours that are more likely to reach miners quickly, since these nodes are the only ones that need to receive all the transactions before they are added to blocks. 
+As we have shown in our experiments our protocol saves, in the best case scenario, 10.2\% of the current bandwidth used and 41.5\% of the number of messages exchanged without compromising robustness. Given the current size of the network, our changes results in savings, at the end of a day, of 1 640 000 messages and 610 GB. We have experimentally observed that these savings to not affect the performance of the Bitcoin network in other dimensions (for instance, it remains robust to node failures).
+
+With these results, we think we were able to achieve our objectives as we were able to lower the resources consumed by the network without affecting resilience and commit time.
+
+\section{Future work}
+
+In this section, we will cover the different options we have available as future work.
+
+\paragraph*{Simulator performance} We would like to improve the performance of our simulator in order to be able to run bigger simulations in a more timely fashion. One possible approach would be writing the simulator in a different language, such as C++, that can be compile into very efficient binaries.
+
+\paragraph*{Improve the current protocol} Another interesting avenue for future work would be leveraging more detailed membership information to build even more efficient dissemination paths. Since we still have some fluctuations in the commit time that we would like to solve. An initial approach that we could try is to nodes together with \textsl{Addr} messages send also the information that our algorithm uses to choose which nodes to relay transactions to. With this information then when nodes were choosing an outgoing connection they could chose the nodes with better classification. However we would have to then evaluate how resilient would be the network that would emerge from using this approach and if we would have any improvements with this approach. 
+
+\paragraph*{Bitcoin improvement proposal} We would also like to integrate our algorithm into the default Bitcoin client and propose it as a Bitcoin improvement proposal. With this our protocol would be submitted to under review by the community and if approved it would be integrated in the client of Bitcoin core the most widely used Bitcoin client.
+
+
+
+
+
+%One of the novel objectives of this work was, in the end, having our solution implement in the Bitcoin client and although we were not able to do this in the time we had, we believe we could not only improve our work but also improve the work of other if we were to propose it as a BIP.
+
+%Finally, another novel objective that we had was improving the current membership protocol, unfortunately, due to time constraints we were also not able to design a good enough protocol but we already have an almost finished implementation of the protocol in the event simulator that we used in this thesis.
+
+

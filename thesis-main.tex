@@ -26,8 +26,6 @@
 \usepackage[explicit]{titlesec}
 \usepackage[acronym]{glossaries}
 
-
-
 \makeglossaries
 
 \newcolumntype{M}[1]{>{\centering\arraybackslash}m{#1}}
@@ -36,6 +34,12 @@
 \newcommand{\todo}[1]{\textcolor{red}{\{TODO:} #1\textcolor{red}\}}
 
 \definecolor{light}{gray}{.85}
+
+\algdef{SE}[VARIABLES]{Variables}{EndVariables}
+   {\algorithmicvariables}
+   {\algorithmicend\ \algorithmicvariables}
+\algnewcommand{\algorithmicvariables}{\textbf{global variables}}
+
 
 \begin{document}
 %\nocite{*}  %Show bibliography without explicit citations
@@ -46,11 +50,11 @@
 \pagestyle{plain}
 
 \input{chapters/agradecimentos.tex}
-\input{acronyms}
 \input{chapters/abstract}
+\input{chapters/keywords}
 \tableofcontents
-\null\newpage
-\null\newpage
+\listoffigures
+\input{acronyms}
 \input{chapters/1-introduction}
 \input{chapters/2-relatedwork}
 \input{chapters/3-work}

@@ -1,8 +1,14 @@
 \chapter*{Resumo}
-Gostava de agradecer a
+
+Os livros padrão distribuídos, que são um dos blocos fundamentais de muitos dos sistemas de cripto-moeda  recentes, têm vindo a ganhar um interesse crescente, devido ao largo número de aplicações onde podem ser usados. Nos sistemas de cripto-moeda, os livros padrã distribuídos são usados para registar as transacções que ocorrem no sistema. Este registo assume tipicamente a forma de uma lista ligada de blocos, em que cada bloco regista um conjunto das transações. Uma vez que a cadeia de blocos é construída e mantida de forma descentralizada, isto obriga à troca de informação frequente entre os diversos nós do sistema. Esta comunicação pode consumir uma quantidade de largura de banda significativa. Infelizmente, tentativas ingénuas de reduzir a quantidade de informação trocada podem ter um impacto negativo no desempenho e correção do processo de propagação em função de alterações ao estado da rede. 
+
+Nesta dissertação propomos novos mecanismos para suportar a propagação de informação no livro padrão do Bitcoin. Visto que a rede é dinâmica, propomos também um conjunto de mecanismos adaptativos que ajustam a propagação de informação em resposta a alterações no estado da rede.   Apresentamos uma avaliação experimental dos mecanismos propostos que mostra que é possível reduzir a largura de banda consumida em cerca de $10.2\%$ e o número de mensagens trocadas em cerca de $41.5\%$, sem que isto tenha um impacto negativo no número de transações confirmadas.
 
 \null\newpage
 \chapter*{Abstract}
-Gostava de agradecer a
+
+Distributed ledgers have received significant attention as a building block for cryptocurrencies and have proven to be also relevant in several other fields. In cryptocurrencies, this abstraction is usually implemented by grouping transactions in blocks that are then linked together to form a blockchain. Nodes need to exchange information to maintain the status of the chain which consumes significant network resources. Unfortunately, naively reducing the number of messages exchanged can have a negative impact in performance and correctness, as some transactions might not be included in the chain.
+
+In this dissertation, we study the mechanisms of information dissemination used in Bitcoin and propose a set of adaptive mechanisms that not only lowers network resource usage but can also adapt to changes in the network. Our experimental evaluation shows that is possible to lower the bandwidth consumed by $10.2\%$ and the number of exchanged messages in $41.5\%$, without any negative impact in the number of transactions committed.
 
 \null\newpage
